@@ -41,3 +41,5 @@ const RankType = {
     QUEEN: 'Q',
     KING: 'K',
 };
+
+module.exports = Card;
