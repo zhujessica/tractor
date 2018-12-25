@@ -1,7 +1,8 @@
 class Card {
     // must be enum types
     constructor(rank, suit) {
-        // TODO: add in type checking
+        // TODO: add in type checking -- make sure to allow jokers (S for small, B for big, listed below) although they are not
+        // included in the list of suittypes/ranktypes bc otherwise creating a deck is too hard
         this.rank = rank;
         this.suit = suit;
     }
@@ -23,6 +24,11 @@ const SuitType = {
 };
 
 /**
+ * Joker type. 
+ */
+const JOKER = 'jokers';
+
+/**
  * Types of card ranks.
  * @enum {string}
  */
@@ -40,6 +46,15 @@ const RankType = {
     JACK: 'J',
     QUEEN: 'Q',
     KING: 'K',
+};
+
+/**
+ * Ranks for jokers. 
+ * @enum {string}
+ */
+const JokerRanks = {
+    BIG: 'B',
+    SMALL: 'S',
 };
 
 module.exports = Card;
