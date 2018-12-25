@@ -1,3 +1,4 @@
+const { SuitType, JOKER, RankType, JokerRank } = require('./CardEnum.js');
 var Card = require('./Card.js'); 
 
 class Deck {
@@ -7,36 +8,36 @@ class Deck {
      */
     constructor(numDecks) {
         this.deck = [];
-        for (var suit in Card.SuitType) {
-            for (var rank in Card.RankType) {
-                for (var j = 0; j < numDecks; j++) {
-                    this.deck.push(new Card(rank, suit))
+        for (var suit in SuitType) {
+            for (var rank in RankType) {
+                for (let j = 0; j < numDecks; j++) {
+                    this.deck.push(new Card(rank, suit, false))
                 }
             }
         }
-        for (var i = 0; i < numDecks; i++) {
-            this.deck.push(new Card(Card.JokerRanks.BIG, Card.JOKER));
-            this.deck.push(new Card(Card.JokerRanks.SMALL, Card.JOKER));
+        for (let i = 0; i < numDecks; i++) {
+            this.deck.push(new Card(JokerRank.BIG, JOKER, true));
+            this.deck.push(new Card(JokerRank.SMALL, JOKER, true));
         }
     }
 
     /**
      * Shuffles the deck using Durstenfeld shuffle
      */
-    function shuffle() {
-        for (var i = array.length - 1; i > 0; i--) {
+    shuffle() {
+        for (var i = this.deck.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [this.deck[i], this.deck[j]] = [this.deck[j], this.deck[i]]
         }
     }
 
-    function drawCard() {
+    drawCard() {
         return this.deck.pop();
     }
 
-    function isEmpty() {
+    isEmpty() {
         return this.deck.length == 0;
     }
-}
+};
 
 module.exports = Deck;
