@@ -1,7 +1,0 @@
-# tractor
-
-This is the game of tractor.
-
-Dev Instructions:
-1. Run npm install
-2. To run the webserver, enter node app.js
