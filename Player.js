@@ -25,14 +25,14 @@ class Player {
      * Adds a card to the deck
      * @param card {Card} a card to be added to the player's hand
      */
-    function drawCard(card) {
+    drawCard(card) {
         this.cards[card.suit].push(card); 
     }
 
     /**
      * Sorts each suit by number
      */
-    function sortCards() {
+    sortCards() {
         for (var suit in Card.SuitType) {
             // is there a way to specify a comaprator lol
         }
@@ -45,7 +45,7 @@ class Player {
      * @param {Card.RankType} trumpRank The rank of the trump
      * @return {boolean} True if the play is valid, false otherwise
     */
-    function isValidPlay(startingPlay, play, trumpSuit, trumpRank) {
+    isValidPlay(startingPlay, play, trumpSuit, trumpRank) {
         var validCards = new Set();
 
         if (play.length != startingPlay.length) {
@@ -86,7 +86,7 @@ class Player {
      * @param {Card.RankType} trumpRank The rank of the trump
      * @return {boolean} True if the card is trump, false otherwise
      */
-    function isTrump(card, trumpSuit, trumpRank) {
+    isTrump(card, trumpSuit, trumpRank) {
         if (card.suit == Card.JOKER) {
             return true;
         } else if (card.suit == trumpSuit) {

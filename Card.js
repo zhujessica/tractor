@@ -7,7 +7,7 @@ class Card {
         this.suit = suit;
     }
 
-    get cardValue() {
+    getCardValue() {
         return this.rank + ' ' + this.suit;
     }
 }
