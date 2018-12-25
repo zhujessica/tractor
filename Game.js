@@ -9,29 +9,28 @@ class Game {
      */
     constructor(id, players) {
         this.id = id;
-        this.players = [];
+        this.players = []; // IDs starting at 1, no banker, no cards, all level 2
+        for (var i = 0; i < players; i++) {
+            this.players.push(new Player(i+1, false, 2))
+        }
         this.banker = 0;
         this.deck = new Deck(players / 2);
         this.deck.shuffle();
-        this.levels = [2, 2];
+        this.levels = []; // levels of every individual person in the game
+        for (let i = 0; i < players; i++) {
+            this.levels.push(this.players[i].level);
+        }
         this.currentCards = []; 
-    }
-
-    /**
-     * @param {Player} player The player being added
-     */
-    function addPlayer(player) {
-        this.players.push(player);
     }
 
     /**
      * Players take turns drawing cards until the deck is empty
      */
-    function drawCards() {
+    drawCards() {
         var i = 0;
-        while !this.deck.isEmpty() {
-            players[i].drawCard(this.deck.drawCard);
-            i = i % players.length + 1;
+        while (!this.deck.isEmpty()) {
+            this.players[i].drawCard(this.deck.drawCard());
+            i = (i+1) % this.players.length;
         }
     }
 }

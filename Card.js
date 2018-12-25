@@ -1,10 +1,10 @@
-const { SuitType, JOKER, RankType, JokerRank } = require('./CardEnum.js');
+const { SuitType, RankType } = require('./CardEnum.js');
 
 class Card {
     /**
      * 
-     * @param {RankType or JokerRank} rank Any card value from Ace to King, Big and Small (for jokers)
-     * @param {SuitType or JOKER} suit Any card suit from clubs, diamonds, hearts, spades
+     * @param {RankType} rank Any card value from Ace to King, Big and Small (for jokers)
+     * @param {SuitType} suit Any card suit from clubs, diamonds, hearts, spades
      * @param {boolean} isTrump True if card is considered trump, False otherwise 
      * (to be decided after drawing is complete)
      */

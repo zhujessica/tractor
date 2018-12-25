@@ -7,12 +7,9 @@ const SuitType = {
     DIAMONDS: 'diamonds',
     HEARTS: 'hearts',
     SPADES: 'spades',
+    // big and small only
+    JOKERS: 'jokers',
 };
-
-/**
-* Joker type. 
-*/
-const JOKER = 'joker';
 
 /**
 * Types of card ranks.
@@ -32,20 +29,12 @@ const RankType = {
     JACK: 'J',
     QUEEN: 'Q',
     KING: 'K',
-};
-
-/**
-* Ranks for jokers. 
-* @enum {string}
-*/
-const JokerRank = {
+    // for jokers only
     BIG: 'B',
     SMALL: 'S',
 };
 
 module.exports = {
     SuitType,
-    JOKER,
     RankType,
-    JokerRank,
 };

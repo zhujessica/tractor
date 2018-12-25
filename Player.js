@@ -1,3 +1,4 @@
+const { SuitType, RankType } = require('./CardEnum.js');
 var Card = require('./Card.js');
 
 class Player {
@@ -5,24 +6,16 @@ class Player {
      * 
      * @param {number} id Player ID (IDs of 1 and 3 are a team, 2 and 4 are a team)
      * @param {boolean} banker True if player is banker, False otherwise
-     * @param {Array<Card>} cards Sorted (by suit, and then by number) list of cards 
-     * currently held by this Player
      * @param {number} level Overall Player level in the game (everyone starts on 2s
      * and the whole game is won when a Player on level Ace wins the round)
      */
-    constructor(id, banker, cards, level) {
+    constructor(id, banker, level) {
         this.id = id;
         this.banker = banker;
-        // this.cards = cards;
-        this.cards = {};
-				// TODO: use suits enum instead of rewriting here
-				var suits = ['clubs', 'diamonds', 'hearts', 'spades'];
-        for (var i = 0; i < suits.length; i++) {
-            this.cards[suits[i]] = [];
+        this.cards = {}; // dictionary separating cards into suits
+        for (let item in SuitType) {
+            this.cards[item] = [];
         }
-				for (var i = 0; i < cards.length; i++) {
-						this.cards[cards[i].suit].push(cards[i]);
-				}
         this.level = level;
     }
 

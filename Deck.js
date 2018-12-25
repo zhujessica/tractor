@@ -1,4 +1,4 @@
-const { SuitType, JOKER, RankType, JokerRank } = require('./CardEnum.js');
+const { SuitType, RankType } = require('./CardEnum.js');
 var Card = require('./Card.js'); 
 
 class Deck {
@@ -10,14 +10,15 @@ class Deck {
         this.deck = [];
         for (var suit in SuitType) {
             for (var rank in RankType) {
-                for (let j = 0; j < numDecks; j++) {
-                    this.deck.push(new Card(rank, suit, false))
+                // add all cards matching either numbers + suits or big and small jokers
+                if ((suit == "JOKERS" && (rank == "BIG" || rank == "SMALL") || 
+                (suit !== "JOKERS" && rank !== "BIG" && rank !== "SMALL"))) {
+                    for (let j = 0; j < numDecks; j++) {
+                        this.deck.push(new Card(rank, suit, false))
+                    }
                 }
+                
             }
-        }
-        for (let i = 0; i < numDecks; i++) {
-            this.deck.push(new Card(JokerRank.BIG, JOKER, true));
-            this.deck.push(new Card(JokerRank.SMALL, JOKER, true));
         }
     }
 
