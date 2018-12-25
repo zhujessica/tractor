@@ -10,8 +10,14 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | b
 2. Install Latest Version of Node
 nvm install node
 
-3. Run Node Server
-node app.js
+## Code Running Instructions
 
-View at `localhost:port`. Currently, port is 3000 so link is `localhost:3000`
+1. Running Node Server
+node install  (install project dependencies)
+node app.js   (run node server)
+view at "localhost:port"; current port is 3000 so go to "localhost:3000"
+
+2. Running Test Cases
+node test     (runs all tests in 'test/' folder)
+
 
