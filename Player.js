@@ -15,9 +15,14 @@ class Player {
         this.banker = banker;
         // this.cards = cards;
         this.cards = {};
-        for (var suit in Card.SuitType) {
-            this.cards[suit] = [];
+				// TODO: use suits enum instead of rewriting here
+				var suits = ['clubs', 'diamonds', 'hearts', 'spades'];
+        for (var i = 0; i < suits.length; i++) {
+            this.cards[suits[i]] = [];
         }
+				for (var i = 0; i < cards.length; i++) {
+						this.cards[cards[i].suit].push(cards[i]);
+				}
         this.level = level;
     }
 
@@ -49,15 +54,15 @@ class Player {
         var validCards = new Set();
 
         if (play.length != startingPlay.length) {
-            return False;
+            return false;
         } else if (this.cards[startingPlay[0].suit].length == 0) {
             // no cards of this suit left
             return true;
         } else if (startingPlay.length == 1) {
             // one card
-            var playedCard = staringPlay[0];
+            var playedCard = startingPlay[0];
             var currentPlay = play[0]; 
-            if (isTrump(playedCard)) {
+            if (this.isTrump(playedCard)) {
                 // played card is trump
                 if (hasTrump(this.cards, trumpSuit, trumpRank) && isTrump(currentPlay)) {
                     return true;
@@ -73,11 +78,10 @@ class Player {
             } else {
                 return false;
             }
-        } else {
+       	} else {
             // tractor of length (play.length / 2)
+					  return false;
         }
-
-        return false;
     }
 
     /**
