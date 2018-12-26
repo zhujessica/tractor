@@ -1,5 +1,6 @@
 var Card = require('../Card.js');
-var assert = require('chai').assert;
+// var assert = require('chai').assert;
+var assert = require('assert');
 
 describe('Card', function() {
 	describe('init', function() {

@@ -7,8 +7,7 @@ const SuitType = {
     DIAMONDS: 'diamonds',
     HEARTS: 'hearts',
     SPADES: 'spades',
-    // big and small only
-    JOKERS: 'jokers',
+    JOKERS: 'jokers', // big and small only
 };
 
 /**
@@ -29,9 +28,8 @@ const RankType = {
     JACK: 'J',
     QUEEN: 'Q',
     KING: 'K',
-    // for jokers only
-    BIG: 'B',
-    SMALL: 'S',
+    BIG: 'B', // only for jokers
+    SMALL: 'S', // only for jokers
 };
 
 module.exports = {
