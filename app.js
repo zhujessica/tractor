@@ -1,24 +1,24 @@
 var express = require('express');
 var path = require('path');
-
-// This is where routing code will live (ie logic for url redirection)
-// (should only be used for determining what room to go into)
-//var routes = require('./routes/index');
+var hbs = require('express-handlebars');
 
 // Initialize App
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-
-// Insert favicon line here
 // app.use(favicon(__dirname + '/public/images/favicon.ico'));
+
+// View Engine
+app.set('views', path.join(__dirname, 'views'));
+app.engine('hbs', hbs({extname: 'hbs'}));
+app.set('view engine', 'hbs');
 
 // Set Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/views/index.html');
-});
+// This is where routing code lives
+var routes = require('./routes/routes');
+app.use('/', routes);
 
 server.listen(3000, function() {
   console.log("Server is now running on port 3000");
@@ -42,8 +42,13 @@ io.on('connection', function(socket){       // Whenever socket.io detects a new 
 
   socket.on('disconnect', function() {
     console.log("Player disconnected");
-    delete clients[socket.id]
-  })
+    delete clients[socket.id];
+  });
+
+  socket.on('card clicked', function(cardInfo) {
+    console.log('Card Clicked: ' + cardInfo);                // We print the statement in the console and
+    io.emit('card clicked', [cardInfo[0], cardInfo[1]]); // io.emit sends this message to EVERYONE connected
+  });
 
   socket.on('chat message', function(msg){  // If the socket that is connected sends a 'chat message'
     console.log('message: ' + msg);         // We print the statement in the console and
