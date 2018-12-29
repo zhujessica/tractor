@@ -37,12 +37,16 @@ class Player {
     }
 
     /**
+     * Only considers single cards and any number of consecutive doubles to be a 
+     * valid starting play. Assumes startingPlay is valid.
      * @param {Array<Card>} startingPlay A list of cards that were played
      * @param {Array<Card>} play The play to check for validity
      * @return {boolean} True if the play is valid, false otherwise
     */
     isValidPlay(startingPlay, play) {
-        var startingSuit = startingPlay[0].suit;
+        var playedCard = startingPlay[0];
+        var currentPlay = play[0];
+        var startingSuit = playedCard.suit;
 
         if (play.length != startingPlay.length) {
             return false;
@@ -54,8 +58,6 @@ class Player {
         // } 
         else if (startingPlay.length == 1) {
             // one card
-            var playedCard = startingPlay[0];
-            var currentPlay = play[0]; 
             if (playedCard.isTrump) {
                 // played card is trump
                 if (this.hasTrump() && currentPlay.isTrump) {
@@ -74,13 +76,38 @@ class Player {
             }
        	} else {
             // tractor of length (play.length / 2)
+            const numPairs = currentPlay.length/2;
+            // if non-trump tractor
+            var playerCardsInSuit = this.cards[startingSuit];
+            // if trump tractor
+            if (playedCard.isTrump) {
+                playerCardsInSuit = this.getTrump();
+            }
 
-            if (this.cards[startingSuit].length <= startingPlay.length) {
+
+            if (playerCardsInSuit.length <= startingPlay.length) {
                 // check play has all of the suit + any random cards
+                for (card in playerCardsInSuit) {
+                    if (!play.includes(card)) {
+                        return false;
+                    }
+                }
             } else {
                 // check play is all of the corresponding suit + doubles if applicable
+                for (card in play) {
+                    if (!playerCardsInSuit.includes(card)) {
+                        return false;
+                    }
+                }
+                if (this.hasDoubles(playerCardsInSuit)) {
+                    const numPairsInSuit = this.findNumPairs(playerCardsInSuit);
+                    if (this.findNumPairs(currentPlay) != Math.min(numPairs, numPairsInSuit)) {
+                        return false;
+                    }
+                }
+                // TODO : check if player has any tractors in hand and play them if necessary
             }
-            return false;
+            return true;
         }
     }
 
@@ -99,8 +126,38 @@ class Player {
                     return false;
                 }
             }
+            return true;
         }
+        return false;
+    }
+
+    /**
+     * if not trump suit, if card2 is next
+     * if trump suit, if card2 is next
+     * @param {Card} card1
+     * @param {Card} card2 
+     * @return {boolean} True if card2 is the next highest value card after card1, false otherwise
+     */
+    isNextHighestValue(card1, card2) {
         return true;
+    }
+
+    /**
+     * @param {Array<Card>} cards to look for doubles in
+     * @return {boolean} True if cards has doubles, false otherwise
+     */
+    hasDoubles(cards) {
+        const card_set = new Set(cards);
+        return card_set.length != cards.length;
+    }
+
+    /**
+     * @param {Array<Card>} cards
+     * @returns {number} Number of pairs found in cards. 0 if none. 
+     */
+    findNumPairs(cards) {
+        const card_set = new Set(cards);
+        return card_set.length - card_set.length;
     }
 
     /**
@@ -132,6 +189,22 @@ class Player {
             }
         }
         return false;
+    }
+
+    /**
+     * @return {number} Return number of trump in player's hand.
+     */
+    numTrump() {
+        // TODO: implement this
+        return 0;
+    }
+
+    /**
+     * @return {Array<Card>} array of trump cards in player's hand.
+     */
+    getTrump() {
+        // TODO: implement this
+        return [];
     }
 
     /**
