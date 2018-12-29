@@ -14,12 +14,21 @@ class Card {
         this.rank = rank;
         this.suit = suit;
         this.isTrump = isTrump;
+        this.points = 0;
+        if (this.rank == RankType.FIVE) {
+            this.points = 5;
+        } else if (this.rank == RankType.TEN || this.rank == RankType.KING) {
+            this.points = 10; 
+        }
     }
 
     getCardValue() {
         return this.rank + ' ' + this.suit + ' ' + this.isTrump;
     }
 
+    getPoints() {
+        return this.points;
+    }
 }
 
 module.exports = Card;
