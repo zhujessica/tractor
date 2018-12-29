@@ -1,45 +1,25 @@
+const { SuitType, RankType } = require('./CardEnum.js');
+
 class Card {
-    // must be enum types
-    constructor(rank, suit) {
-        // TODO: add in type checking
+    /**
+     * 
+     * @param {RankType} rank Any card value from Ace to King, Big and Small (for jokers)
+     * @param {SuitType} suit Any card suit from clubs, diamonds, hearts, spades
+     * @param {boolean} isTrump True if card is considered trump, False otherwise 
+     * (to be decided after drawing is complete)
+     */
+    constructor(rank, suit, isTrump) {
+        // TODO: add in type checking -- make sure to allow jokers (S for small, B for big, listed below) although they are not
+        // included in the list of suittypes/ranktypes bc otherwise creating a deck is too hard
         this.rank = rank;
         this.suit = suit;
+        this.isTrump = isTrump;
     }
 
-    get cardValue() {
-        return this.rank + ' ' + this.suit;
+    getCardValue() {
+        return this.rank + ' ' + this.suit + ' ' + this.isTrump;
     }
+
 }
-
-/**
- * Types of card suits.
- * @enum {string}
- */
-const SuitType = {
-    CLUBS: 'clubs',
-    DIAMONDS: 'diamonds',
-    HEARTS: 'hearts',
-    SPADES: 'spades',
-};
-
-/**
- * Types of card ranks.
- * @enum {string}
- */
-const RankType = {
-    ACE: 'A',
-    TWO: '2',
-    THREE: '3',
-    FOUR: '4',
-    FIVE: '5',
-    SIX: '6',
-    SEVEN: '7',
-    EIGHT: '8',
-    NINE: '9',
-    TEN: '10',
-    JACK: 'J',
-    QUEEN: 'Q',
-    KING: 'K',
-};
 
 module.exports = Card;
