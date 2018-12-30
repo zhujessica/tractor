@@ -26,8 +26,6 @@ io.on('connection', function(socket){       // Whenever socket.io detects a new 
   console.log("id:" + socket.id);
   console.log(clients[socket.id] + " has logged in");
 
-
-
   socket.on('disconnect', function() {
     console.log("Player disconnected");
     delete clients[socket.id]
