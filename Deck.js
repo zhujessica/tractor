@@ -14,12 +14,13 @@ class Deck {
                 if ((suit == "JOKERS" && (rank == "BIG" || rank == "SMALL") || 
                 (suit !== "JOKERS" && rank !== "BIG" && rank !== "SMALL"))) {
                     for (let j = 0; j < numDecks; j++) {
-                        this.deck.push(new Card(rank, suit, false))
+                        this.deck.push(new Card(RankType[rank], SuitType[suit], false))
                     }
                 }
                 
             }
         }
+        // console.log(this.deck);
     }
 
     /**

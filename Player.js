@@ -14,13 +14,13 @@ class Player {
         this.banker = banker;
         this.cards = {}; // dictionary separating cards into suits
         for (let suit in SuitType) {
-            this.cards[suit] = [];
+            this.cards[SuitType[suit]] = [];
         }
         this.level = level;
     }
 
     /**
-     * Adds a card to the deck
+     * Adds a card to the player's hand.
      * @param card {Card} a card to be added to the player's hand
      */
     drawCard(card) {
