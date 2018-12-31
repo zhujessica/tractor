@@ -5,18 +5,16 @@ class Player {
     /**
      * 
      * @param {number} id Player ID (IDs of 1 and 3 are a team, 2 and 4 are a team)
-     * @param {boolean} banker True if player is banker, False otherwise
-     * @param {number} level Overall Player level in the game (everyone starts on 2s
      * and the whole game is won when a Player on level Ace wins the round)
      */
-    constructor(id, banker, level) {
+    constructor(id) {
         this.id = id;
-        this.banker = banker;
+        this.banker = false; // by default, not banker
         this.cards = {}; // dictionary separating cards into suits
         for (let suit in SuitType) {
             this.cards[SuitType[suit]] = [];
         }
-        this.level = level;
+        this.level = 2; // default value
     }
 
     /**
@@ -38,7 +36,8 @@ class Player {
 
     /**
      * Only considers single cards and any number of consecutive doubles to be a 
-     * valid starting play. Assumes startingPlay is valid.
+     * valid starting play. Assumes startingPlay is valid. Assumes play is contained
+     * within player's cards. 
      * @param {Array<Card>} startingPlay A list of cards that were played
      * @param {Array<Card>} play The play to check for validity
      * @return {boolean} True if the play is valid, false otherwise
@@ -50,13 +49,7 @@ class Player {
 
         if (play.length != startingPlay.length) {
             return false;
-        } 
-        // i think this following rule is covered by the two cases below
-        // else if (!startingPlay[0].isTrump && this.cards[startingPlay[0].suit].length == 0) {
-        //     // no cards of this suit left and not trump
-        //     return true;
-        // } 
-        else if (startingPlay.length == 1) {
+        } else if (startingPlay.length == 1) {
             // one card
             if (playedCard.isTrump) {
                 // played card is trump
@@ -84,7 +77,6 @@ class Player {
                 playerCardsInSuit = this.getTrump();
             }
 
-
             if (playerCardsInSuit.length <= startingPlay.length) {
                 // check play has all of the suit + any random cards
                 for (card in playerCardsInSuit) {
@@ -104,6 +96,7 @@ class Player {
                     if (this.findNumPairs(currentPlay) != Math.min(numPairs, numPairsInSuit)) {
                         return false;
                     }
+                    
                 }
                 // TODO : check if player has any tractors in hand and play them if necessary
             }
@@ -139,7 +132,17 @@ class Player {
      * @return {boolean} True if card2 is the next highest value card after card1, false otherwise
      */
     isNextHighestValue(card1, card2) {
-        return true;
+        if (!card1.isTrump) {
+            if (card2.suit != card1.suit) {
+                return false;
+            } else if (card1.rank == RankType.ACE && card2.rank == RankType.TWO) {
+                return true;
+            } else if (card1.rank + 1 == card2.rank) {
+                return true;
+            }
+        } else {
+
+        }
     }
 
     /**
