@@ -14,6 +14,8 @@ class Card {
         this.rank = rank;
         this.suit = suit;
         this.isTrump = isTrump;
+        this.isTrumpSuit = false;
+        this.isTrumpRank = false;
         this.points = 0;
         if (this.rank == RankType.FIVE) {
             this.points = 5;

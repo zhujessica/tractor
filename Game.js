@@ -30,6 +30,18 @@ class Game {
     }
 
     /**
+     * Deals one card from the deck to the player. Server calls this method.
+     * Throws error if no cards left to deal.
+     */
+    dealCard(player) {
+        if (this.deck.isEmpty()) {
+            throw new Error('no more cards to deal!');
+        } else {
+            player.drawCard(this.deck.drawCard());
+        }
+    }
+
+    /**
      * Players take turns drawing cards until the deck is empty
      */
     drawCards() {
