@@ -9,11 +9,9 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <!--CSS-->
-    <link rel="stylesheet" type="text/css" href="/css/index.css">
+    <link rel="stylesheet" type="text/css" href="css/lobby.css">
 
     <script>
-      var playerNumber = {{playerNumber}};
-      console.log("player number: " + playerNumber);
     </script>
 
   </head>
@@ -21,7 +19,7 @@
 
     <h1> Tractor </h1>
 
-    <h2> Welcome player {{playerNumber}} </h2>
+    <h2> Welcome {{username}} </h2>
 
     <h3> My Cards:</h3>
     {{#each cards}}
@@ -30,9 +28,6 @@
       </div>
     {{/each}}
 
-    <h3> Cards Clicked by Anyone:</h3>
-    <ul id="cards_clicked"></ul>
-
-    <script src="/js/index.js"></script>
+    <script src="/js/lobby.js"></script>
   </body>
 </html>

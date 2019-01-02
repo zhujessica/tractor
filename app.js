@@ -1,6 +1,7 @@
 var express = require('express');
 var path = require('path');
 var hbs = require('express-handlebars');
+var bodyParser = require('body-parser');
 
 // Initialize App
 var app = express();
@@ -18,6 +19,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // This is where routing code lives
 var routes = require('./routes/routes');
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json())
 app.use('/', routes);
 
 server.listen(3000, function() {
@@ -29,6 +33,7 @@ var count = 0;
 var lastSocket = 0;
 
 io.on('connection', function(socket){       // Whenever socket.io detects a new connection, this function runs.
+  console.log("OHHHH BOY HERE WE GO")
   if (!(socket.id in clients)){
   	count += 1;
   	console.log("New player connected");          // this particular instance is given the variable name "socket"

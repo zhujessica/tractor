@@ -1,10 +1,12 @@
 var socket = io();
 
 $(function () {
+
   $('form').submit(function(){
     socket.emit('chat message', $('#m').val());
     $('#m').val('');
     return false;
+    // test
   });
 
   $('.card').click(function() {
