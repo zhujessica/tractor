@@ -1,6 +1,5 @@
 var Card = require('../Card.js');
 const { RankType, SuitType } = require('../CardEnum.js');
-// var assert = require('chai').assert;
 var assert = require('assert');
 
 describe('Card', function() {

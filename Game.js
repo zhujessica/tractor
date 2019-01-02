@@ -8,7 +8,7 @@ class Game {
      * 
      * @param {Array<Player>} players The players in the game
      */
-    constructor(players, trumpRank) {
+    constructor(players) {
         this.players = players;
         this.banker = 0;
         for (var p in players) {
@@ -26,6 +26,18 @@ class Game {
         this.trumpRank = RankType.TWO;
         if (this.banker != 0) {
             this.trumpRank = this.banker.level;
+        }
+    }
+
+    /**
+     * Deals one card from the deck to the player. Server calls this method.
+     * Throws error if no cards left to deal.
+     */
+    dealCard(player) {
+        if (this.deck.isEmpty()) {
+            throw new Error('no more cards to deal!');
+        } else {
+            player.drawCard(this.deck.drawCard());
         }
     }
 
@@ -58,6 +70,56 @@ class Game {
         for (var player in this.players) {
             player.setTrumpCards(this.trumpSuit, this.trumpRank);
         }
+    }
+
+    /**
+     * To be used when determining tractors.
+     * @param {Card} card1
+     * @param {Card} card2 
+     * @return {boolean} True if card2 is the next highest value card after card1, false otherwise
+     */
+    isNextHighestValue(card1, card2) {
+        if (card1.isTrump != card2.isTrump) {
+            return false;
+        }
+        if (!card1.isTrump) {
+            if (card2.suit != card1.suit) {
+                return false;
+            } else if (card1.rank == RankType.ACE && card2.rank == RankType.TWO) {
+                return true;
+            } else if (card1.rank + 1 == card2.rank) {
+                return true;
+            } else if (card1.rank + 1 == this.trumpRank && card1.rank + 2 == card2.rank) {
+                return true;
+            }
+        } else {
+            if (card1.rank != this.trumpRank && card2.rank != this.trumpRank) {
+                if (card1.rank + 1 == card2.rank) {
+                    return true;
+                } else if (card1.rank + 1 == this.trumpRank && card1.rank + 2 == card2.rank) {
+                    return true;
+                }
+            } else if (card1.rank != this.trumpRank && card2.rank == this.trumpRank) {
+                if (this.trumpRank != RankType.ACE) {
+                    if (card1.rank == RankType.ACE && card2.suit != this.trumpSuit) {
+                        return true;
+                    }
+                } else {
+                    if (card1.rank == RankType.KING && card2.suit != this.trumpSuit) {
+                        return true;
+                    }
+                }
+            } else if (card1.rank == this.trumpRank && card2.rank == this.trumpRank) {
+                if (card1.suit != this.trumpSuit && card2.suit == this.trumpSuit) {
+                    return true;
+                }
+            } else if (card1.rank == this.trumpRank && card2.rank == RankType.SMALL) {
+                if (card1.suit == this.trumpSuit) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
