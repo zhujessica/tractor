@@ -23,13 +23,13 @@ describe('Deck', function() {
         })
     })
     
-	describe('shuffle', function() {
-		it('shuffles deck', function() {	
+    describe('shuffle', function() {
+				it('shuffles deck', function() {	
             var deck = new Deck(2);
             var unshuffled = new Deck(2);
             deck.shuffle();
             assert.notDeepEqual(deck, unshuffled);
+				})
 		})
-	})
 })
 

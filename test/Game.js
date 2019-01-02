@@ -6,14 +6,14 @@ var Game = require('../Game.js');
 var assert = require('chai').assert;
 
 describe('Game', function() {
-	describe('isNextHighestValue', function() {
+		describe('isNextHighestValue', function() {
         var player1 = new Player(1);
         var player2 = new Player(2);
         var player3 = new Player(3);
         var player4 = new Player(4);
         var game = new Game([player1, player2, player3, player4]);
 
-		it('one trump one non trump', function() {	
+				it('one trump one non trump', function() {	
             game.trumpRank = 2;
             game.trumpSuit = SuitType.CLUBS;
             var card1 = new Card(RankType.THREE, SuitType.CLUBS);
@@ -131,3 +131,4 @@ describe('Game', function() {
         })
     })
 })
+

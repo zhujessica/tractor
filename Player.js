@@ -215,10 +215,10 @@ class Player {
      * Set the players trump cards.
      */
     setTrumpCards(trumpSuit, trumpRank) {
-        for (var suit in SuitType) {
-            for (var card in this.cards[suit]) {
-                if (isTrump(card, trumpSuit, trumpRank)) {
-                    card.isTrump = true;
+        for (var suit of Object.valuse(SuitType)) {
+            for (var i = 0; i < this.cards[suit].length; i++) {
+                if (this.isTrump(this.cards[suit][i], trumpSuit, trumpRank)) {
+                    this.cards[suit][i].isTrump = true;
                 }
             }
         }

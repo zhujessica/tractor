@@ -16,7 +16,7 @@ describe('Card', function() {
 						assert.throws(cardInit, Error); 
 				})
 				it('errors on bad suit', function() {
-						const cardInit = () => new Card(RankType.ACE, "not a suit");
+				    const cardInit = () => new Card(RankType.ACE, "not a suit");
 						assert.throws(cardInit, Error); 
 				})
     })
@@ -43,7 +43,6 @@ describe('Card', function() {
             var card = new Card(RankType.THREE, SuitType.DIAMONDS);
             assert.strictEqual(card.getPoints(), 0);
         })
-
     })
 })
 
