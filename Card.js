@@ -49,6 +49,14 @@ class Card {
     getPoints() {
         return this.points;
     }
+
+    /**
+     * Checks if two cards are the same.
+     * @return {boolean} true if they are the same, false if not.
+     */
+    equals(card) {
+        return this.rank == card.rank && this.suit == card.suit;
+    }
 }
 
 module.exports = Card;

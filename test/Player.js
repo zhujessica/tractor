@@ -1,5 +1,6 @@
 var Player = require('../Player.js');
 var Card = require('../Card.js');
+const { RankType, SuitType } = require('../CardEnum.js');
 var assert = require('chai').assert;
 
 const { RankType, SuitType } = require('../CardEnum.js');
@@ -357,63 +358,296 @@ describe('Player', function() {
 		})
 	})
 
-		describe('isTrump()', function() {
-				it('suit is trump suit', function() {
-						var card = new Card(RankType.ACE, SuitType.SPADES, true);
-						var player = new Player(1);
+	describe('isTrump()', function() {
+		it('suit is trump suit', function() {
+			var card = new Card(RankType.ACE, SuitType.SPADES, true);
+			var player = new Player(1);
 
-						assert.strictEqual(player.isTrump(card, SuitType.HEARTS, RankType.TWO), false);
-						assert.strictEqual(player.isTrump(card, SuitType.SPADES, RankType.TWO), true);
-						assert.strictEqual(player.isTrump(card, SuitType.HEARTS, RankType.ACE), true);
-						assert.strictEqual(player.isTrump(card, SuitType.SPADES, RankType.ACE), true);
-				})
+			assert.strictEqual(player.isTrump(card, SuitType.HEARTS, RankType.TWO), false);
+			assert.strictEqual(player.isTrump(card, SuitType.SPADES, RankType.TWO), true);
+			assert.strictEqual(player.isTrump(card, SuitType.HEARTS, RankType.ACE), true);
+			assert.strictEqual(player.isTrump(card, SuitType.SPADES, RankType.ACE), true);
 		})
+	})
 
-		describe('hasTrump()', function() {
-				it('has no trump', function() {
-						var card = new Card(RankType.FIVE, SuitType.HEARTS);
-						var card2 = new Card(RankType.SEVEN, SuitType.SPADES);
-						var player = new Player(1);
-						player.drawCard(card);
-						player.drawCard(card2);
+	describe('hasTrump()', function() {
+		it('has no trump', function() {
+			var card = new Card(RankType.FIVE, SuitType.HEARTS);
+			var card2 = new Card(RankType.SEVEN, SuitType.SPADES);
+			var player = new Player(1);
+			player.drawCard(card);
+			player.drawCard(card2);
 
-						assert.strictEqual(player.hasTrump(), false);
-				})
-				it('has trump suit', function() {
-						var card = new Card(RankType.FIVE, SuitType.HEARTS);
-						var card2 = new Card(RankType.SEVEN, SuitType.SPADES);
-						card2.isTrump = true;
-						var player = new Player(1);
-						player.drawCard(card);
-						player.drawCard(card2);
-
-						assert.strictEqual(player.hasTrump(), true);
-				})
+			assert.strictEqual(player.hasTrump(), false);
 		})
+		it('has trump suit', function() {
+			var card = new Card(RankType.FIVE, SuitType.HEARTS);
+			var card2 = new Card(RankType.SEVEN, SuitType.SPADES);
+			card2.isTrump = true;
+			var player = new Player(1);
+			player.drawCard(card);
+			player.drawCard(card2);
+
+			assert.strictEqual(player.hasTrump(), true);
+		})
+	})
 		
-		describe('setTrumpCards()', function() {
-				it('sets trump suit correctly', function() {
-						var card = new Card(RankType.FIVE, SuitType.HEARTS, false);
-						var card2 = new Card(RankType.SEVEN, SuitType.SPADES, false);
-						player = new Player(1);
-						player.drawCard(card);
-						player.drawCard(card2);
-						assert.strictEqual(player.setTrumpCards(SuitType.SPADES, RankType.TWO), 1);
+	describe('setTrumpCards()', function() {
+		it('sets trump suit correctly', function() {
+			var card = new Card(RankType.FIVE, SuitType.HEARTS, false);
+			var card2 = new Card(RankType.SEVEN, SuitType.SPADES, false);
+			player = new Player(1);
+			player.drawCard(card);
+			player.drawCard(card2);
+			assert.strictEqual(player.setTrumpCards(SuitType.SPADES, RankType.TWO), 1);
 
-						assert.strictEqual(card.isTrump, false);
-						assert.strictEqual(card2.isTrump, true);
-				})
-				it('sets trump number correctly', function() {
-						var card = new Card(RankType.FIVE, SuitType.HEARTS, false);
-						var card2 = new Card(RankType.SEVEN, SuitType.SPADES, false);
-						player = new Player(1);
-						player.drawCard(card);
-						player.drawCard(card2);
-						assert.strictEqual(player.setTrumpCards(SuitType.CLUBS, RankType.FIVE), 1);
-
-						assert.strictEqual(card.isTrump, true);
-						assert.strictEqual(card2.isTrump, false);
-				})
+			assert.strictEqual(card.isTrump, false);
+			assert.strictEqual(card2.isTrump, true);
 		})
-})
 
+		it('sets trump number correctly', function() {
+			var card = new Card(RankType.FIVE, SuitType.HEARTS, false);
+			var card2 = new Card(RankType.SEVEN, SuitType.SPADES, false);
+			player = new Player(1);
+			player.drawCard(card);
+			player.drawCard(card2);
+			assert.strictEqual(player.setTrumpCards(SuitType.CLUBS, RankType.FIVE), 1);
+
+			assert.strictEqual(card.isTrump, true);
+			assert.strictEqual(card2.isTrump, false);
+		})
+
+        it('adds new card to hand', function() {    
+            var card = new Card('A', 'spades');
+            var card2 = new Card('J', 'hearts');
+            var card3 = new Card('2', 'diamonds');
+            
+            var player = new Player(1);
+            
+            player.drawCard(card);
+            assert.deepEqual(player.cards['spades'], [card]);
+            player.drawCard(card2);
+            assert.deepEqual(player.cards['hearts'], [card2]);
+            player.drawCard(card3);
+            assert.deepEqual(player.cards['diamonds'], [card3]);
+        })
+    })
+
+    describe('isValidPlay', function() {
+        it('single non trump card starting play, valid play', function() {
+            var card = new Card('A', 'spades');
+
+            // plays same suit as original
+            var card2 = new Card('3', 'spades');
+            player = new Player(1);
+            player.drawCard(card2);
+            assert.strictEqual(player.isValidPlay([card], [card2]), true);
+
+            // plays different non trump suit from original, when player is void in original suit
+            var card2 = new Card('3', 'diamonds');
+            player = new Player(1);
+            player.drawCard(card2);
+            assert.strictEqual(player.isValidPlay([card], [card2]), true);
+
+            // plays trump suit, when player is void in original suit
+            var card2 = new Card('3', 'diamonds');
+            card2.isTrump = true;
+            player.drawCard(card2);
+            assert.strictEqual(player.isValidPlay([card], [card2]), true);
+
+        })
+        it('single non trump card starting play, invalid play', function() {
+
+        })
+        it('single trump card starting play, valid play', function() {
+
+        })
+        it ('single trump card startingp play, invalid play', function() {
+
+        })
+        it('single card left, not first to play', function() {
+            var card = new Card('A', 'spades');
+            var card2 = new Card('5', 'hearts');
+            player = new Player(1);
+            player.drawCard(card2);
+            
+            assert.strictEqual(player.isValidPlay([card], [card2], 'diamonds', '3'), true);
+
+            var card2 = new Card('5', 'spades');
+            player = new Player(1);
+            player.drawCard(card2);
+            assert.strictEqual(player.isValidPlay([card], [card2], 'diamonds', '3'), true);
+
+            var card2 = new Card('3', 'hearts');
+            player = new Player(1);
+            player.drawCard(card2);
+            assert.strictEqual(player.isValidPlay([card], [card2], 'diamonds', '3'), true);
+
+            var card2 = new Card('5', 'diamonds');
+            player = new Player(1);
+            player.drawCard(card2);
+            assert.strictEqual(player.isValidPlay([card], [card2], 'diamonds', '3'), true); 
+        })
+        it('multiple cards left, first to play', function() {
+            var card = new Card('A', 'spades');
+            var card2 = new Card('J', 'hearts');
+            player = new Player(1);
+            player.drawCard(card);
+            player.drawCard(card2);
+
+            assert.strictEqual(player.isValidPlay([card], [card], 'diamonds', '3'), true); 
+        })
+        it('multiple cards left, not first to play', function() {
+            var card = new Card('A', 'spades');
+            
+            // no card of suit
+            var card2 = new Card('5', 'hearts');
+            var card3 = new Card('7', 'diamonds');
+            player = new Player(1);
+            player.drawCard(card2);
+            player.drawCard(card3);
+
+            assert.strictEqual(player.isValidPlay([card], [card2], 'diamonds', '3'), true);
+
+            // card of suit but not played
+            var card2 = new Card('5', 'hearts');
+            var card3 = new Card('7', 'spades');
+            player = new Player(1);
+            player.drawCard(card2);
+            player.drawCard(card3);
+
+            assert.strictEqual(player.isValidPlay([card], [card2], 'diamonds', '3'), false);
+
+            // card of suit and played
+            var card2 = new Card('5', 'hearts');
+            var card3 = new Card('7', 'spades');
+            player = new Player(1);
+            player.drawCard(card2);
+            player.drawCard(card3);
+
+            assert.strictEqual(player.isValidPlay([card], [card3], 'diamonds', '3'), true);
+        })
+    })
+
+    describe('isTrump()', function() {
+        it('suit is trump suit', function() {
+          var card = new Card('A', 'spades');
+          var player = new Player(1);
+
+          assert.strictEqual(player.isTrump(card, 'hearts', '2'), false);
+          assert.strictEqual(player.isTrump(card, 'spades', '2'), true);
+          assert.strictEqual(player.isTrump(card, 'hearts', 'A'), true);
+          assert.strictEqual(player.isTrump(card, 'spades', 'A'), true);
+        })
+    })
+
+    describe ('hasCard', function() {
+        it('correctly determines when has card and card is not a joker', function() {
+            var player = new Player(1);
+            var card = new Card(RankType.TEN, SuitType.SPADES);
+            player.drawCard(card);
+            assert.strictEqual(player.hasCard(new Card(RankType.TEN, SuitType.SPADES)), true);
+        })
+
+        it('correctly determines when does not have card and card is not a joker', function() {
+            var player = new Player(1);
+            var card = new Card(RankType.THREE, SuitType.SPADES);
+            player.drawCard(card);
+            assert.strictEqual(player.hasCard(new Card(RankType.THREE, SuitType.HEARTS)), false);
+        })
+
+        it('correctly determines when does not have card and card is a joker', function() {
+            var player = new Player(1);
+            assert.strictEqual(player.hasCard(new Card(RankType.BIG, SuitType.JOKER)), false);
+        })
+    })
+
+    describe('setVault', function() {
+        it('correctly sets vault', function() {
+            var player = new Player(1);
+            player.banker = true;
+            player.drawCard(new Card(RankType.TEN, SuitType.SPADES));
+            player.drawCard(new Card(RankType.FIVE, SuitType.SPADES));
+            player.drawCard(new Card(RankType.THREE, SuitType.SPADES));
+            player.drawCard(new Card(RankType.TEN, SuitType.HEARTS));
+            player.drawCard(new Card(RankType.TWO, SuitType.CLUBS));
+            player.drawCard(new Card(RankType.FOUR, SuitType.CLUBS));
+            player.drawCard(new Card(RankType.SIX, SuitType.CLUBS));
+            player.drawCard(new Card(RankType.EIGHT, SuitType.CLUBS));
+            player.drawCard(new Card(RankType.TEN, SuitType.DIAMONDS));
+            player.drawCard(new Card(RankType.TEN, SuitType.DIAMONDS));
+            player.drawCard(new Card(RankType.TWO, SuitType.DIAMONDS));
+
+            player.vault = [
+                new Card(RankType.TEN, SuitType.SPADES),
+                new Card(RankType.FIVE, SuitType.SPADES),
+                new Card(RankType.THREE, SuitType.SPADES),
+                new Card(RankType.TEN, SuitType.DIAMONDS),
+                new Card(RankType.TWO, SuitType.DIAMONDS),
+                new Card(RankType.TWO, SuitType.CLUBS),
+                new Card(RankType.FOUR, SuitType.CLUBS),
+                new Card(RankType.SIX, SuitType.CLUBS),
+            ]
+
+            player.setVault();
+
+            assert.deepEqual(player.cards, {
+                'spades': [],
+                'hearts': [new Card(RankType.TEN, SuitType.HEARTS)],
+                'diamonds': [new Card(RankType.TEN, SuitType.DIAMONDS)],
+                'clubs': [new Card(RankType.EIGHT, SuitType.CLUBS)],
+                'jokers': [],
+            })
+        })
+    })
+
+    describe('addToVault', function() {
+        it('correctly adds to vault', function() {
+            var card = new Card(RankType.THREE, SuitType.DIAMONDS);
+            player = new Player(1);
+            player.banker = true;
+            player.drawCard(card);
+            player.addToVault(card);
+            assert.deepEqual(player.vault, [card]);
+        })
+    })
+
+    describe('removeFromVault', function() {
+        it('correctly removes from vault when only one card', function() {
+            var card = new Card(RankType.THREE, SuitType.DIAMONDS);
+            player = new Player(1);
+            player.banker = true;
+            player.drawCard(card);
+            player.addToVault(card);
+            player.removeFromVault(card);
+            assert.deepEqual(player.vault, []);
+        })
+
+        it ('removes correct card from vault', function() {
+            var card1 = new Card(RankType.THREE, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.THREE, SuitType.SPADES);
+            player = new Player(1);
+            player.banker = true;
+            player.drawCard(card1);
+            player.drawCard(card2);
+            player.addToVault(card1);
+            player.addToVault(card2);
+            assert.deepEqual(player.vault, [card1, card2]);
+            player.removeFromVault(card1);
+            assert.deepEqual(player.vault, [card2]);
+        })
+
+        it('correctly removes from vault with duplicate card', function() {
+            var card = new Card(RankType.THREE, SuitType.DIAMONDS);
+            player = new Player(1);
+            player.banker = true;
+            player.drawCard(card);
+            player.drawCard(card);
+            player.addToVault(card);
+            player.addToVault(card);
+            assert.deepEqual(player.vault, [card, card]);
+            player.removeFromVault(card);
+            assert.deepEqual(player.vault, [card]);
+        })
+    })
+})

@@ -1,7 +1,9 @@
 const { SuitType, RankType } = require('./CardEnum.js');
 var Card = require('./Card.js'); 
 
+const VAULT_SIZE = 8;
 class Deck {
+    static get VAULT_SIZE() { return VAULT_SIZE; }
     /**
      * 
      * @param {number} numDecks The number of full decks for the game
@@ -37,8 +39,18 @@ class Deck {
         return this.deck.pop();
     }
 
+    /**
+     * @return {boolean} returns true if there are no cards left to draw based on vault size, and false otherwise
+     */
     isEmpty() {
-        return this.deck.length == 0;
+        return this.deck.length == VAULT_SIZE;
+    }
+
+    getVault() {
+        if (this.deck.length != VAULT_SIZE) {
+            throw new Error('Not done drawing!');
+        }
+        return this.deck;
     }
 };
 

@@ -1,6 +1,7 @@
 const { SuitType, RankType } = require('./CardEnum.js');
 var { compareRanks, hasDoubles, findNumPairs, isNextHighestValue, hasTractorOfLength } = require('./CardHelper.js');
 var Card = require('./Card.js');
+var Deck = require('./Deck.js');
 
 class Player {
     /**
@@ -11,6 +12,7 @@ class Player {
     constructor(id) {
         this.id = id;
         this.banker = false; // by default, not banker
+        this.vault = []; // only for banker
         this.cards = {}; // dictionary separating cards into suits
         for (let suit in SuitType) {
             this.cards[SuitType[suit]] = [];
@@ -36,6 +38,50 @@ class Player {
         }
     }
 
+    /**
+     * @param {Card} card The card to be added to the vault.
+     */
+    addToVault(card) {
+        if (!this.hasCard(card)) {
+            throw new Error('The player does not have this card');
+        }
+        this.vault.push(card);
+    }
+
+    /**
+     * @param {Card} card The card to be removed from the vault.
+     */
+    removeFromVault(card) {
+        for (var c in this.vault) {
+            if (this.vault[c].equals(card)) {
+                this.vault.splice(c,1);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Removes the vault cards from the player's hand
+     */
+    setVault() {
+        if (this.banker == false) {
+            throw new Error('Only banker has a vault!');
+        }
+        if (this.vault.length != Deck.VAULT_SIZE) {
+            throw new Error('Vault should be ' + Deck.VAULT_SIZE + ' cards');
+        }
+        for (var c in this.vault) {
+            var card = this.vault[c];
+            var suit = this.cards[card.suit];
+            for (var i in suit) {
+                if (suit[i].equals(card)) {
+                    suit.splice(i, 1);
+                    break;
+                }
+            }
+            this.vault[c] = suit;
+        }
+    }
     /**
      * Only considers single cards and any number of consecutive doubles to be a 
      * valid starting play. Assumes startingPlay is valid. Assumes play is contained
@@ -129,6 +175,59 @@ class Player {
                 }
             }
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * if not trump suit, if card2 is next
+     * if trump suit, if card2 is next
+     * @param {Card} card1
+     * @param {Card} card2 
+     * @return {boolean} True if card2 is the next highest value card after card1, false otherwise
+     */
+    isNextHighestValue(card1, card2) {
+        if (!card1.isTrump) {
+            if (card2.suit != card1.suit) {
+                return false;
+            } else if (card1.rank == RankType.ACE && card2.rank == RankType.TWO) {
+                return true;
+            } else if (card1.rank + 1 == card2.rank) {
+                return true;
+            }
+        } else {
+
+        }
+    }
+
+    /**
+     * @param {Array<Card>} cards to look for doubles in
+     * @return {boolean} True if cards has doubles, false otherwise
+     */
+    hasDoubles(cards) {
+        const card_set = new Set(cards);
+        return card_set.length != cards.length;
+    }
+
+    /**
+     * @param {Array<Card>} cards
+     * @returns {number} Number of pairs found in cards. 0 if none. 
+     */
+    findNumPairs(cards) {
+        const card_set = new Set(cards);
+        return card_set.length - card_set.length;
+    }
+
+    /**
+     * @param {Card} card The card to check for in the player's hand.
+     * @return {boolean} true if the player has the card, false otherwise.
+     */
+    hasCard(card) {
+        var suit = this.cards[card.suit];
+        for (var c in suit) {
+            if (suit[c].equals(card)) {
+                return true;
+            }
         }
         return false;
     }

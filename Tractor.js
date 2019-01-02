@@ -28,19 +28,27 @@ class Tractor {
 
     /**
      * @param {Player} player The player that was banker last game
-     * @param {number} winningTeam 0 if team (2,4) won last game, otherwise 1
      * @param {number} pointsWon The number of points won in the last round by non-banking team
      */
-    advanceGame(banker, winningTeam, pointsWon) {
+    advanceGame(banker, pointsWon) {
+        var winningTeam = 0; // 0 if team (2,4) won, else 1
+        if (pointsWon >= 80 && banker.id % 2 == 0) {
+            winningTeam = 1;
+        } else if (pointsWon < 80 && banker.id % 2 == 1) {
+            winningTeam = 1;
+        }
         banker.banker = false;
         if (banker.id % 2 == winningTeam) {
             // banking team won
-            levels = Math.floor((80 - pointsWon) / 40) + 1;
+            var levels = Math.floor((80 - pointsWon) / 40) + 1;
+            if (pointsWon == 40) {
+                levels = 1;
+            }
             banker.level += levels;
             this.getPartner(banker).level += levels;
             this.getPartner(banker).banker = true;
         } else {
-            levels = Math.floor((pointsWon - 80) / 40);
+            var levels = Math.floor((pointsWon - 80) / 40);
             var newBanker = this.players[banker.id % 4];
             newBanker.banker = true;
             newBanker.level += levels;
@@ -53,7 +61,7 @@ class Tractor {
      * @return {Player} the partner of the player
      */
     getPartner(player) {
-        return this.players[(banker.id + 1) % 4];
+        return this.players[(player.id + 1) % 4];
     }
 }
 
