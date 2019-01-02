@@ -114,7 +114,7 @@ class Player {
         if (play.length == 1) {
             return true;
         } else if (play.length % 2 == 0) {
-            for (var i = 0; i < play.length; i=i+2) {
+            for (var i = 0; i < play.length; i+=2) {
                 // check if they are pairs
                 if (play[i] != play[i+1]) {
                     return false;
@@ -171,7 +171,7 @@ class Player {
      * @return {boolean} True if the card is trump, false otherwise
      */
     isTrump(card, trumpSuit, trumpRank) {
-        if (card.suit == "JOKERS") {
+        if (card.suit == SuitType.JOKERS) {
             return true;
         } else if (card.suit == trumpSuit) {
             return true;
@@ -215,13 +215,16 @@ class Player {
      * Set the players trump cards.
      */
     setTrumpCards(trumpSuit, trumpRank) {
-        for (var suit of Object.valuse(SuitType)) {
+				var num_trump = 0;
+        for (var suit of Object.values(SuitType)) {
             for (var i = 0; i < this.cards[suit].length; i++) {
                 if (this.isTrump(this.cards[suit][i], trumpSuit, trumpRank)) {
-                    this.cards[suit][i].isTrump = true;
+										num_trump += 1;
+										this.cards[suit][i].isTrump = true;
                 }
             }
         }
+				return num_trump;
     }
 
     /**

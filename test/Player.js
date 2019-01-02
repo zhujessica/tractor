@@ -129,11 +129,49 @@ describe('Player', function() {
 		})
 
 		describe('hasTrump()', function() {
-				//TODO	
+				it('has no trump', function() {
+						var card = new Card(RankType.FIVE, SuitType.HEARTS, false);
+						var card2 = new Card(RankType.SEVEN, SuitType.SPADES, false);
+						player = new Player(1);
+						player.drawCard(card);
+						player.drawCard(card2);
+
+						assert.strictEqual(player.hasTrump(), false);
+				})
+				it('has trump suit', function() {
+						var card = new Card(RankType.FIVE, SuitType.HEARTS, false);
+						var card2 = new Card(RankType.SEVEN, SuitType.SPADES, true);
+						player = new Player(1);
+						player.drawCard(card);
+						player.drawCard(card2);
+
+						assert.strictEqual(player.hasTrump(), true);
+				})
 		})
 		
 		describe('setTrumpCards()', function() {
-				//TODO
+				it('sets trump suit correctly', function() {
+						var card = new Card(RankType.FIVE, SuitType.HEARTS, false);
+						var card2 = new Card(RankType.SEVEN, SuitType.SPADES, false);
+						player = new Player(1);
+						player.drawCard(card);
+						player.drawCard(card2);
+						assert.strictEqual(player.setTrumpCards(SuitType.SPADES, RankType.TWO), 1);
+
+						assert.strictEqual(card.isTrump, false);
+						assert.strictEqual(card2.isTrump, true);
+				})
+				it('sets trump number correctly', function() {
+						var card = new Card(RankType.FIVE, SuitType.HEARTS, false);
+						var card2 = new Card(RankType.SEVEN, SuitType.SPADES, false);
+						player = new Player(1);
+						player.drawCard(card);
+						player.drawCard(card2);
+						assert.strictEqual(player.setTrumpCards(SuitType.CLUBS, RankType.FIVE), 1);
+
+						assert.strictEqual(card.isTrump, true);
+						assert.strictEqual(card2.isTrump, false);
+				})
 		})
 })
 
