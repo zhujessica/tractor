@@ -58,6 +58,7 @@ class Player {
                 } else if (!this.hasTrump()) {
                     return true;
                 }
+								return false;
             } else if (startingSuit == currentPlay.suit) {
                 // suit matches
                 return true;
@@ -184,9 +185,9 @@ class Player {
      * @return {boolean} True if player has trump left, false otherwise
      */
     hasTrump() {
-        for (var suit in SuitType) {
-            for (var card in this.cards[suit]) {
-                if (card.isTrump) {
+        for (var suit of Object.values(SuitType)) {
+            for (var i = 0; i < this.cards[suit].length; i++) {
+                if (this.cards[suit][i].isTrump) {
                     return true;
                 }
             }

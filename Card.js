@@ -1,4 +1,5 @@
 const { SuitType, RankType } = require('./CardEnum.js');
+var assert = require('assert');
 
 class Card {
     /**
@@ -9,10 +10,29 @@ class Card {
      * (to be decided after drawing is complete)
      */
     constructor(rank, suit, isTrump) {
-        // TODO: add in type checking -- make sure to allow jokers (S for small, B for big, listed below) although they are not
-        // included in the list of suittypes/ranktypes bc otherwise creating a deck is too hard
+				// Validate rank
+				// https://stackoverflow.com/questions/35948669/how-to-check-if-value-exists-in-object-using-javascript
+				var validRank = Object.keys(RankType).some(
+						function(k) {
+								return RankType[k] == rank;
+						}
+				);
+				if (!validRank) {
+						throw new Error("invalid rank given to Card\n");
+				}
         this.rank = rank;
+				
+				// Validate suit
+				var validSuit = Object.keys(SuitType).some(
+						function(k) {
+								return SuitType[k] == suit;
+						}
+				);
+				if (!validSuit) {
+						throw new Error("invalid suit given to Card\n");
+				}
         this.suit = suit;
+
         this.isTrump = isTrump;
         this.isTrumpSuit = false;
         this.isTrumpRank = false;
