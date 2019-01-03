@@ -1,5 +1,5 @@
 const { SuitType, RankType } = require('./CardEnum.js');
-var { compareRanks, hasDoubles, findNumPairs, isNextHighestValue } = require('./CardHelper.js');
+var { compareRanks, hasDoubles, findNumPairs, isNextHighestValue, hasTractorOfLength } = require('./CardHelper.js');
 var Card = require('./Card.js');
 
 class Player {
@@ -16,6 +16,7 @@ class Player {
             this.cards[SuitType[suit]] = [];
         }
         this.level = 2; // default value
+        this.trumpRank = 2;
     }
 
     /**
@@ -71,7 +72,7 @@ class Player {
             }
        	} else {
             // tractor of length (play.length / 2)
-            const numPairs = currentPlay.length/2;
+            const numPairs = startingPlay.length/2;
             // if non-trump tractor
             var playerCardsInSuit = this.cards[startingSuit];
             // if trump tractor
@@ -81,26 +82,32 @@ class Player {
 
             if (playerCardsInSuit.length <= startingPlay.length) {
                 // check play has all of the suit + any random cards
-                for (card in playerCardsInSuit) {
-                    if (!play.includes(card)) {
+                for (var i = 0; i < playerCardsInSuit.length; i++) {
+                    var card = playerCardsInSuit[i];
+                    if (play.indexOf(card) == -1) {
                         return false;
                     }
                 }
             } else {
                 // check play is all of the corresponding suit + doubles if applicable
-                for (card in play) {
-                    if (!playerCardsInSuit.includes(card)) {
+                for (var i = 0; i < play.length; i++) {
+                    var card = play[i];
+                    if (playerCardsInSuit.indexOf(card) == -1) {
                         return false;
                     }
                 }
-                if (this.hasDoubles(playerCardsInSuit)) {
-                    const numPairsInSuit = this.findNumPairs(playerCardsInSuit);
-                    if (this.findNumPairs(currentPlay) != Math.min(numPairs, numPairsInSuit)) {
+                if (hasDoubles(playerCardsInSuit)) {
+                    const numPairsInSuit = findNumPairs(playerCardsInSuit);
+                    if (findNumPairs(play) != Math.min(numPairs, numPairsInSuit)) {
                         return false;
                     }
                     
                 }
-                // TODO : check if player has any tractors in hand and play them if necessary
+                // check if player has any tractors in hand and play them if necessary
+                if (hasTractorOfLength(playerCardsInSuit, numPairs, this.trumpRank) 
+                    && !hasTractorOfLength(play, numPairs, this.trumpRank)) {
+                    return false;
+                }
             }
             return true;
         }
@@ -170,7 +177,16 @@ class Player {
      */
     getTrump() {
         // TODO: implement this
-        return [];
+        var trumps = [];
+        for (let suit in SuitType) {
+            var cardsInSuit = this.cards[SuitType[suit]];
+            for (var i = 0; i < cardsInSuit.length; i++) {
+                if (cardsInSuit[i].isTrump) {
+                    trumps.push(cardsInSuit[i]);
+                }
+            }
+        }
+        return trumps;
     }
 
     /**

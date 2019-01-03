@@ -22,8 +22,8 @@ describe('Card', function() {
     })
     describe('getCardValue', function() {
         it('correctly gets card value', function() {
-            var card = new Card(RankType.ACE, SuitType.SPADES, true);
-            assert.strictEqual(card.getCardValue(), '14 spades true');
+            var card = new Card(RankType.ACE, SuitType.SPADES);
+            assert.strictEqual(card.getCardValue(), '14 spades false');
         })
     })
     describe('getCardPoints', function() {

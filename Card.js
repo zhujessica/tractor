@@ -6,10 +6,8 @@ class Card {
      * 
      * @param {RankType} rank Any card value from Ace to King, Big and Small (for jokers)
      * @param {SuitType} suit Any card suit from clubs, diamonds, hearts, spades
-     * @param {boolean} isTrump True if card is considered trump, False otherwise 
-     * (to be decided after drawing is complete)
      */
-    constructor(rank, suit, isTrump) {
+    constructor(rank, suit) {
 				// Validate rank
 				// https://stackoverflow.com/questions/35948669/how-to-check-if-value-exists-in-object-using-javascript
 				var validRank = Object.keys(RankType).some(
@@ -33,7 +31,7 @@ class Card {
 				}
         this.suit = suit;
 
-        this.isTrump = isTrump;
+        this.isTrump = false;
         this.isTrumpSuit = false;
         this.isTrumpRank = false;
         this.points = 0;

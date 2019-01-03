@@ -60,6 +60,9 @@ class Game {
         player.banker = true;
         this.banker = player.id;
         this.trumpRank = player.level;
+        for (var i = 0; i < this.players.length; i++) {
+            this.players[i].trumpRank = this.trumpRank;
+        }
     }
 
     /**

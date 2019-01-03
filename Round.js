@@ -1,4 +1,4 @@
-var { checkIfAllDoubles, compareTwoHands } = require('./CardHelper.js');
+var { checkIfAllDoubles, compareTwoHands, hasTractorOfLength } = require('./CardHelper.js');
 var Card = require('./Card.js');
 var Player = require('./Player.js');
 
@@ -69,9 +69,11 @@ class Round {
             } else {
                 if (checkIfAllDoubles(hand)) {
                     // TODO: add in tractor checking
-                    if (!compareTwoHands(highestHand[0], hand[0])) {
-                        highestPlayer = player;
-                        highestHand = this.playedCards[player.id];
+                    if (hasTractorOfLength(hand, startingHand.length/2)) {
+                        if (!compareTwoHands(highestHand[0], hand[0])) {
+                            highestPlayer = player;
+                            highestHand = this.playedCards[player.id];
+                        }
                     }
                 }
             }
