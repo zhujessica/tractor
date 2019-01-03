@@ -31,19 +31,7 @@ class Round {
     calculateTotalPoints() {
         var points = 0;
         for (var hand in this.playedCards) {
-            points += this.calculatePoints(hand);
-        }
-        return points;
-    }
-
-    /**
-     * @param {Array<Card>} cards The cards for which to calculate points.
-     * @return {number} Return the number of points in the cards.
-     */
-    calculatePoints(cards) {
-        var points = 0;
-        for (var card in cards) {
-            points += cards[card].getPoints();
+            points += Round.calculatePoints(hand);
         }
         return points;
     }
@@ -81,6 +69,55 @@ class Round {
         }
         return highestPlayer;
     }
-}
+
+    /**
+     * @return {boolean} Returns true if cards are all doubles.
+     */
+    checkIfAllDoubles(cards) {
+        var cardSet = new Set(cards);
+        return cards.length - cardSet.size == cards.length/2;
+    }
+
+    /**
+     * 
+     * @param {Card} card1 
+     * @param {Card} card2 
+     * @return {boolean} True if card2 is smaller or the same as card1, false otherwise
+     */
+    compareTwoHands(card1, card2) {
+        if (card1.isTrump && !card2.isTrump) {
+            return true;
+        } else if (card1.isTrump && card2.isTrump) {
+            if (!card1.isTrumpRank && !card2.isTrumpRank) {
+                return card1.rank >= card2.rank;
+            } else if (card1.isTrumpRank && !card2.isTrumpRank) {
+                return card2.suit != SuitType.JOKERS;
+            } else if (!card1.isTrumpRank && card2.isTrumpRank) {
+                return card1.suit == SuitType.JOKERS;
+            } else { // both trump ranks
+                return !card2.isTrumpSuit;
+            }
+        } else if (!card1.isTrump && card2.isTrump) {
+            return false;
+        } else if (!card1.isTrump && !card2.isTrump) {
+            if (card2.suit != card1.suit) {
+                return true;
+            } else {
+                return card1.rank >= card2.rank;
+            }
+        }
+    }
+    /**
+     * @param {Array<Card>} cards The cards for which to calculate points.
+     * @return {number} Return the number of points in the cards.
+     */
+    static calculatePoints(cards) {
+        var points = 0;
+        for (var card in cards) {
+            points += cards[card].getPoints();
+        }
+        return points;
+    }
+};
 
 module.exports = Round;

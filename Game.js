@@ -11,6 +11,7 @@ class Game {
     constructor(players) {
         this.players = players;
         this.banker = 0;
+        this.points = 0;
         for (var p in players) {
             if (players[p].banker == true) {
                 if (this.banker == 0) {
@@ -125,6 +126,25 @@ class Game {
         return false;
     }
 
+    /**
+     * @param {number} points The number of points to add to the current game.
+     */
+    updatePoints(points) {
+        this.points += points;
+    }
+
+    /**
+     * @param {Player} lastRoundWinner The winning player of the last round.
+     * @param {number} numCards The number of cards in the last round.
+     * @return {number} points The number of points won in the game, including vault.
+     */
+    getTotalPoints(lastRoundWinner, numCards) {
+        if (lastRoundWinner.id % 2 == this.banker.id % 2) {
+            return this.points;
+        }
+        var vaultPoints = Round.calculatePoints(this.banker.vault);
+        return this.points + vaultPoints * Math.pow(2, numCards);
+    }
 }
 
 module.exports = Game;

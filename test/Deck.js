@@ -24,12 +24,34 @@ describe('Deck', function() {
     })
     
     describe('shuffle', function() {
-				it('shuffles deck', function() {	
+        it('shuffles deck', function() {    
             var deck = new Deck(2);
             var unshuffled = new Deck(2);
             deck.shuffle();
             assert.notDeepEqual(deck, unshuffled);
-				})
-		})
-})
+        })
+    })
 
+    describe('drawCard', function() {
+        it('draws card and removes it', function() {
+            var deck = new Deck(2);
+            var card = deck.drawCard();
+            assert.strictEqual(deck.deck.length, 107);
+        })
+    })
+
+    describe('isEmpty', function() {
+        it('is not empty when more cards left than vault', function() {
+            var deck = new Deck(2);
+            assert.strictEqual(deck.isEmpty(), false);
+        })
+        it('is empty when only vault cards left', function() {
+            var deck = new Deck(2);
+            var length = deck.deck.length - Deck.VAULT_SIZE;
+            for (var i = 0; i < length; i++){
+                deck.drawCard();
+            }
+            assert.strictEqual(deck.isEmpty(), true);
+        })
+    })
+})
