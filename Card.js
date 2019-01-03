@@ -8,27 +8,27 @@ class Card {
      * @param {SuitType} suit Any card suit from clubs, diamonds, hearts, spades
      */
     constructor(rank, suit) {
-				// Validate rank
-				// https://stackoverflow.com/questions/35948669/how-to-check-if-value-exists-in-object-using-javascript
-				var validRank = Object.keys(RankType).some(
-						function(k) {
-								return RankType[k] == rank;
-						}
-				);
-				if (!validRank) {
-						throw new Error("invalid rank given to Card\n");
-				}
+        // Validate rank
+        // https://stackoverflow.com/questions/35948669/how-to-check-if-value-exists-in-object-using-javascript
+        var validRank = Object.keys(RankType).some(
+            function(k) {
+                return RankType[k] == rank;
+            }
+        );
+        if (!validRank) {
+            throw new Error("invalid rank given to Card\n");
+        }
         this.rank = rank;
-				
-				// Validate suit
-				var validSuit = Object.keys(SuitType).some(
-						function(k) {
-								return SuitType[k] == suit;
-						}
-				);
-				if (!validSuit) {
-						throw new Error("invalid suit given to Card\n");
-				}
+        
+        // Validate suit
+        var validSuit = Object.keys(SuitType).some(
+            function(k) {
+                return SuitType[k] == suit;
+            }
+        );
+        if (!validSuit) {
+            throw new Error("invalid suit given to Card\n");
+        }
         this.suit = suit;
 
         this.isTrump = false;
