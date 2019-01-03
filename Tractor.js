@@ -6,11 +6,11 @@ class Tractor {
     /**
      * 
      * @param {number} id ID of this game of tractor (for url)
-     * @param {number} players The number of players in the game
      */
-    constructor(id, players) {
+    constructor(id) {
         this.id = id;
         this.players = []; // IDs starting at 1, no banker, no cards, all level 2
+
     }
 
     /**
@@ -22,7 +22,7 @@ class Tractor {
             throw new Error("Game of tractor can only have 4 players");
         }
         var id = this.players.length + 1;
-        this.players.push(new Player(id, false, 2));
+        this.players.push(new Player(id));
         return this.players[id - 1];
     }
 

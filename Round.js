@@ -1,4 +1,4 @@
-const { SuitType, RankType } = require('./CardEnum.js');
+var { checkIfAllDoubles, compareTwoHands } = require('./CardHelper.js');
 var Card = require('./Card.js');
 var Player = require('./Player.js');
 
@@ -62,14 +62,14 @@ class Round {
             var player = this.players[i];
             var hand = this.playedCards[player.id];
             if (startingHand.length == 1) {
-                if (!this.compareTwoHands(highestHand[0], hand[0])) {
+                if (!compareTwoHands(highestHand[0], hand[0])) {
                     highestPlayer = player;
                     highestHand = this.playedCards[player.id];
                 }
             } else {
-                if (this.checkIfAllDoubles(hand)) {
+                if (checkIfAllDoubles(hand)) {
                     // TODO: add in tractor checking
-                    if (!this.compareTwoHands(highestHand[0], hand[0])) {
+                    if (!compareTwoHands(highestHand[0], hand[0])) {
                         highestPlayer = player;
                         highestHand = this.playedCards[player.id];
                     }
@@ -78,44 +78,6 @@ class Round {
             
         }
         return highestPlayer;
-    }
-
-    /**
-     * @return {boolean} Returns true if cards are all doubles.
-     */
-    checkIfAllDoubles(cards) {
-        var cardSet = new Set(cards);
-        return cards.length - cardSet.size == cards.length/2;
-    }
-
-    /**
-     * 
-     * @param {Card} card1 
-     * @param {Card} card2 
-     * @return {boolean} True if card2 is smaller or the same as card1, false otherwise
-     */
-    compareTwoHands(card1, card2) {
-        if (card1.isTrump && !card2.isTrump) {
-            return true;
-        } else if (card1.isTrump && card2.isTrump) {
-            if (!card1.isTrumpRank && !card2.isTrumpRank) {
-                return card1.rank >= card2.rank;
-            } else if (card1.isTrumpRank && !card2.isTrumpRank) {
-                return card2.suit != SuitType.JOKERS;
-            } else if (!card1.isTrumpRank && card2.isTrumpRank) {
-                return card1.suit == SuitType.JOKERS;
-            } else { // both trump ranks
-                return !card2.isTrumpSuit;
-            }
-        } else if (!card1.isTrump && card2.isTrump) {
-            return false;
-        } else if (!card1.isTrump && !card2.isTrump) {
-            if (card2.suit != card1.suit) {
-                return true;
-            } else {
-                return card1.rank >= card2.rank;
-            }
-        }
     }
 }
 
