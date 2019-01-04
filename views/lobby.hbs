@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="css/lobby.css">
 
     <script>
+      var username = "{{username}}";
     </script>
 
   </head>
@@ -20,13 +21,13 @@
     <h1> Tractor </h1>
 
     <h2> Welcome {{username}} </h2>
-
-    <h3> My Cards:</h3>
-    {{#each cards}}
-      <div class="card {{this}}">
-        {{this}}
-      </div>
-    {{/each}}
+    <br>
+    <div class="games"> 
+      <h2>Rooms</h2>
+      <ul class="gameList">
+      </ul>
+    </div>
+    <input type="text" id="roomName"><button type="button" id="createRoom">+ Create a new game</button>
 
     <script src="/js/lobby.js"></script>
   </body>

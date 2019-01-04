@@ -10,9 +10,7 @@ router.get('/', function(req, res) {
 
 /* POST lobby page. */
 router.post('/lobby', function(req, res) {
-  console.log(req.body);
-  console.log(req.body.username);
-  res.render('index', {
+  res.render('lobby', {
     // Right now I'm just passing in cards as a demo.
     // Ideally, the router would route to some URL # which would pass in the entire game state to each of the clients
     cards: ["5_Spades", "3_Diamonds", "A_Clubs"],

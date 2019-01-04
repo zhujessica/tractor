@@ -31,6 +31,12 @@ server.listen(3000, function() {
 var clients = {};
 var count = 0;
 var lastSocket = 0;
+var currentGames = {
+  'lit times': {'owner': 'daniel', 'numPeople': '1'},
+  'okay room': {'owner': 'daniel', 'numPeople': '1'}
+};
+
+var currentPlayers = {};
 
 io.on('connection', function(socket){       // Whenever socket.io detects a new connection, this function runs.
   console.log("OHHHH BOY HERE WE GO")
@@ -40,14 +46,32 @@ io.on('connection', function(socket){       // Whenever socket.io detects a new 
   	clients[socket.id] = "player" + count.toString();
   }
 
-  lastSocket = socket.id
+  console.log(clients);
 
-  console.log("id:" + socket.id);
-  console.log(clients[socket.id] + " has logged in");
+  lastSocket = socket.id;
+
+  console.log("Socket " + socket.id + " has connected");
+
+  socket.on('enter lobby', function(username) {
+    console.log(username + " has entered the lobby");
+    io.sockets.connected[socket.id].emit('generate rooms', currentGames);
+  });
+
+  socket.on('new room', function(roomName, username) {
+    console.log(username + " trying to create room " + roomName);
+    if (roomName in currentGames) {
+      io.sockets.connected[socket.id].emit('failed room', roomName);
+    } else {
+      let gameDetails = {'owner': username, 'numPeople': '1'};
+      currentGames[roomName] = gameDetails;
+      io.emit('new room', {'name': roomName, 'details': gameDetails});
+    }
+  });
 
   socket.on('disconnect', function() {
     console.log("Player disconnected");
     delete clients[socket.id];
+    console.log(clients);
   });
 
   socket.on('card clicked', function(cardInfo) {
