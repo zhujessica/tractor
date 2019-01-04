@@ -6,14 +6,14 @@ var Game = require('../Game.js');
 var assert = require('chai').assert;
 
 describe('Game', function() {
-	describe('isNextHighestValue', function() {
+        describe('isNextHighestValue', function() {
         var player1 = new Player(1);
         var player2 = new Player(2);
         var player3 = new Player(3);
         var player4 = new Player(4);
         var game = new Game([player1, player2, player3, player4]);
 
-		it('one trump one non trump', function() {	
+        it('one trump one non trump', function() {  
             game.trumpRank = 2;
             game.trumpSuit = SuitType.CLUBS;
             var card1 = new Card(RankType.THREE, SuitType.CLUBS);
@@ -127,7 +127,60 @@ describe('Game', function() {
 
             // numerical skip trump rank
             assert.strictEqual(game.isNextHighestValue(card8, card9), true);
-            
+        })
+    })
+
+    describe('updatePoints', function() {
+        it('correctly starts with 0 points', function() {
+            var player1 = new Player(1);
+            var player2 = new Player(2);
+            var player3 = new Player(3);
+            var player4 = new Player(4);
+            var game = new Game([player1, player2, player3, player4]);
+            assert.strictEqual(game.points, 0);
+        })
+
+        it('correctly updates points', function() {
+            var player1 = new Player(1);
+            var player2 = new Player(2);
+            var player3 = new Player(3);
+            var player4 = new Player(4);
+            var game = new Game([player1, player2, player3, player4]);
+            assert.strictEqual(game.points, 0);
+            game.updatePoints(10);
+            assert.strictEqual(game.points, 10);
+            game.updatePoints(5);
+            assert.strictEqual(game.points, 15);
+        })
+    })
+
+    describe('getTotalPoints', function() {
+        it('correctly works when banking team wins', function() {
+            var player1 = new Player(1);
+            var player2 = new Player(2);
+            var player3 = new Player(3);
+            var player4 = new Player(4);
+            var game = new Game([player1, player2, player3, player4]);
+            game.banker = player1;
+            player1.banker = true;
+            player1.vault = [new Card(RankType.TEN, SuitType.SPADES), new Card(RankType.TWO, SuitType.HEARTS)];
+            game.points = 5;
+            assert.strictEqual(game.getTotalPoints(player1, 2), 5);
+            assert.strictEqual(game.getTotalPoints(player3, 2), 5);
+        })
+
+        it('correctly works when nonbanking team wins', function() {
+            var player1 = new Player(1);
+            var player2 = new Player(2);
+            var player3 = new Player(3);
+            var player4 = new Player(4);
+            var game = new Game([player1, player2, player3, player4]);
+            game.banker = player1;
+            player1.banker = true;
+            player1.vault = [new Card(RankType.TEN, SuitType.SPADES), new Card(RankType.TWO, SuitType.HEARTS)];
+            game.points = 5;
+            assert.strictEqual(game.getTotalPoints(player2, 1), 25);
+            assert.strictEqual(game.getTotalPoints(player4, 2), 45);
         })
     })
 })

@@ -1,4 +1,4 @@
-const { SuitType, RankType } = require('./CardEnum.js');
+var { checkIfAllDoubles, compareTwoHands, hasTractorOfLength } = require('./CardHelper.js');
 var Card = require('./Card.js');
 var Player = require('./Player.js');
 
@@ -31,19 +31,7 @@ class Round {
     calculateTotalPoints() {
         var points = 0;
         for (var hand in this.playedCards) {
-            points += this.calculatePoints(hand);
-        }
-        return points;
-    }
-
-    /**
-     * @param {Array<Card>} cards The cards for which to calculate points.
-     * @return {number} Return the number of points in the cards.
-     */
-    calculatePoints(cards) {
-        var points = 0;
-        for (var card in cards) {
-            points += cards[card].getPoints();
+            points += Round.calculatePoints(hand);
         }
         return points;
     }
@@ -62,16 +50,18 @@ class Round {
             var player = this.players[i];
             var hand = this.playedCards[player.id];
             if (startingHand.length == 1) {
-                if (!this.compareTwoHands(highestHand[0], hand[0])) {
+                if (!compareTwoHands(highestHand[0], hand[0])) {
                     highestPlayer = player;
                     highestHand = this.playedCards[player.id];
                 }
             } else {
-                if (this.checkIfAllDoubles(hand)) {
+                if (checkIfAllDoubles(hand)) {
                     // TODO: add in tractor checking
-                    if (!this.compareTwoHands(highestHand[0], hand[0])) {
-                        highestPlayer = player;
-                        highestHand = this.playedCards[player.id];
+                    if (hasTractorOfLength(hand, startingHand.length/2)) {
+                        if (!compareTwoHands(highestHand[0], hand[0])) {
+                            highestPlayer = player;
+                            highestHand = this.playedCards[player.id];
+                        }
                     }
                 }
             }
@@ -117,6 +107,17 @@ class Round {
             }
         }
     }
-}
+    /**
+     * @param {Array<Card>} cards The cards for which to calculate points.
+     * @return {number} Return the number of points in the cards.
+     */
+    static calculatePoints(cards) {
+        var points = 0;
+        for (var card in cards) {
+            points += cards[card].getPoints();
+        }
+        return points;
+    }
+};
 
 module.exports = Round;

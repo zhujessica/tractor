@@ -1,20 +1,29 @@
 var Card = require('../Card.js');
-const { RankType, SuitType } = require('../CardEnum.js');
 var assert = require('assert');
+
+const { RankType, SuitType } = require('../CardEnum.js');
 
 describe('Card', function() {
     describe('init', function() {
         it('correctly intializes rank and suit', function() {
-            var card = new Card('A', 'spades');
-            assert.strictEqual(card.rank, 'A');
-            assert.strictEqual(card.suit, 'spades');
+            var card = new Card(RankType.ACE, SuitType.SPADES);
+            assert.strictEqual(card.rank, RankType.ACE);
+            assert.strictEqual(card.suit, SuitType.SPADES);
             assert.strictEqual(card.points, 0);
+        })
+        it('errors on bad rank', function() {
+            const cardInit = () => new Card(-1, SuitType.SPADES);
+            assert.throws(cardInit, Error); 
+        })
+        it('errors on bad suit', function() {
+            const cardInit = () => new Card(RankType.ACE, "not a suit");
+            assert.throws(cardInit, Error); 
         })
     })
     describe('getCardValue', function() {
         it('correctly gets card value', function() {
-            var card = new Card('A', 'spades', true);
-            assert.strictEqual(card.getCardValue(), 'A spades true');
+            var card = new Card(RankType.ACE, SuitType.SPADES);
+            assert.strictEqual(card.getCardValue(), '14 spades false');
         })
     })
     describe('getCardPoints', function() {
@@ -34,7 +43,6 @@ describe('Card', function() {
             var card = new Card(RankType.THREE, SuitType.DIAMONDS);
             assert.strictEqual(card.getPoints(), 0);
         })
-
     })
 })
 

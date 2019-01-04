@@ -1,19 +1,37 @@
 const { SuitType, RankType } = require('./CardEnum.js');
+var assert = require('assert');
 
 class Card {
     /**
      * 
      * @param {RankType} rank Any card value from Ace to King, Big and Small (for jokers)
      * @param {SuitType} suit Any card suit from clubs, diamonds, hearts, spades
-     * @param {boolean} isTrump True if card is considered trump, False otherwise 
-     * (to be decided after drawing is complete)
      */
-    constructor(rank, suit, isTrump) {
-        // TODO: add in type checking -- make sure to allow jokers (S for small, B for big, listed below) although they are not
-        // included in the list of suittypes/ranktypes bc otherwise creating a deck is too hard
+    constructor(rank, suit) {
+        // Validate rank
+        // https://stackoverflow.com/questions/35948669/how-to-check-if-value-exists-in-object-using-javascript
+        var validRank = Object.keys(RankType).some(
+            function(k) {
+                return RankType[k] == rank;
+            }
+        );
+        if (!validRank) {
+            throw new Error("invalid rank given to Card\n");
+        }
         this.rank = rank;
+        
+        // Validate suit
+        var validSuit = Object.keys(SuitType).some(
+            function(k) {
+                return SuitType[k] == suit;
+            }
+        );
+        if (!validSuit) {
+            throw new Error("invalid suit given to Card\n");
+        }
         this.suit = suit;
-        this.isTrump = isTrump;
+
+        this.isTrump = false;
         this.isTrumpSuit = false;
         this.isTrumpRank = false;
         this.points = 0;
@@ -30,6 +48,14 @@ class Card {
 
     getPoints() {
         return this.points;
+    }
+
+    /**
+     * Checks if two cards are the same.
+     * @return {boolean} true if they are the same, false if not.
+     */
+    equals(card) {
+        return this.rank == card.rank && this.suit == card.suit;
     }
 }
 

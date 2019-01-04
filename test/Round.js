@@ -53,6 +53,25 @@ describe('Round', function() {
     //         assert.deepEqual(round.playedCards, {1: [king], 2: [three], 3: [five]});
     //     })
     // })
+    describe('calculatePoints', function() {
+        it('correctly counts points for 5', function() {
+            assert.strictEqual(Round.calculatePoints([new Card(RankType.FIVE, SuitType.SPADES)]), 5);
+        })
+        it('correctly counts points for 10', function() {
+            assert.strictEqual(Round.calculatePoints([new Card(RankType.TEN, SuitType.SPADES)]), 10);
+        })
+        it('correctly counts points for K', function() {
+            assert.strictEqual(Round.calculatePoints([new Card(RankType.KING, SuitType.SPADES)]), 10);
+        })
+        it('correctly counts points for a list', function() {
+            assert.strictEqual(Round.calculatePoints([
+                    new Card(RankType.KING, SuitType.SPADES),
+                    new Card(RankType.FIVE, SuitType.HEARTS),
+                    new Card(RankType.SEVEN, SuitType.HEARTS),
+                ]), 15);
+        })
+    })
+
     describe('determineRoundHighest', function() {
         it('correctly determines round highest, single', function() {
             var p1 = new Player(1);
@@ -187,4 +206,3 @@ describe('Round', function() {
         })
     })
 })
-

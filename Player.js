@@ -1,5 +1,7 @@
 const { SuitType, RankType } = require('./CardEnum.js');
+var { compareRanks, hasDoubles, findNumPairs, isNextHighestValue, hasTractorOfLength } = require('./CardHelper.js');
 var Card = require('./Card.js');
+var Deck = require('./Deck.js');
 
 class Player {
     /**
@@ -10,11 +12,13 @@ class Player {
     constructor(id) {
         this.id = id;
         this.banker = false; // by default, not banker
+        this.vault = []; // only for banker
         this.cards = {}; // dictionary separating cards into suits
         for (let suit in SuitType) {
             this.cards[SuitType[suit]] = [];
         }
         this.level = 2; // default value
+        this.trumpRank = 2;
     }
 
     /**
@@ -34,6 +38,50 @@ class Player {
         }
     }
 
+    /**
+     * @param {Card} card The card to be added to the vault.
+     */
+    addToVault(card) {
+        if (!this.hasCard(card)) {
+            throw new Error('The player does not have this card');
+        }
+        this.vault.push(card);
+    }
+
+    /**
+     * @param {Card} card The card to be removed from the vault.
+     */
+    removeFromVault(card) {
+        for (var c in this.vault) {
+            if (this.vault[c].equals(card)) {
+                this.vault.splice(c,1);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Removes the vault cards from the player's hand
+     */
+    setVault() {
+        if (this.banker == false) {
+            throw new Error('Only banker has a vault!');
+        }
+        if (this.vault.length != Deck.VAULT_SIZE) {
+            throw new Error('Vault should be ' + Deck.VAULT_SIZE + ' cards');
+        }
+        for (var c in this.vault) {
+            var card = this.vault[c];
+            var suit = this.cards[card.suit];
+            for (var i in suit) {
+                if (suit[i].equals(card)) {
+                    suit.splice(i, 1);
+                    break;
+                }
+            }
+            this.vault[c] = suit;
+        }
+    }
     /**
      * Only considers single cards and any number of consecutive doubles to be a 
      * valid starting play. Assumes startingPlay is valid. Assumes play is contained
@@ -58,6 +106,7 @@ class Player {
                 } else if (!this.hasTrump()) {
                     return true;
                 }
+                                                                return false;
             } else if (startingSuit == currentPlay.suit) {
                 // suit matches
                 return true;
@@ -67,9 +116,9 @@ class Player {
             } else {
                 return false;
             }
-       	} else {
+        } else {
             // tractor of length (play.length / 2)
-            const numPairs = currentPlay.length/2;
+            const numPairs = startingPlay.length/2;
             // if non-trump tractor
             var playerCardsInSuit = this.cards[startingSuit];
             // if trump tractor
@@ -79,26 +128,32 @@ class Player {
 
             if (playerCardsInSuit.length <= startingPlay.length) {
                 // check play has all of the suit + any random cards
-                for (card in playerCardsInSuit) {
-                    if (!play.includes(card)) {
+                for (var i = 0; i < playerCardsInSuit.length; i++) {
+                    var card = playerCardsInSuit[i];
+                    if (play.indexOf(card) == -1) {
                         return false;
                     }
                 }
             } else {
                 // check play is all of the corresponding suit + doubles if applicable
-                for (card in play) {
-                    if (!playerCardsInSuit.includes(card)) {
+                for (var i = 0; i < play.length; i++) {
+                    var card = play[i];
+                    if (playerCardsInSuit.indexOf(card) == -1) {
                         return false;
                     }
                 }
-                if (this.hasDoubles(playerCardsInSuit)) {
-                    const numPairsInSuit = this.findNumPairs(playerCardsInSuit);
-                    if (this.findNumPairs(currentPlay) != Math.min(numPairs, numPairsInSuit)) {
+                if (hasDoubles(playerCardsInSuit)) {
+                    const numPairsInSuit = findNumPairs(playerCardsInSuit);
+                    if (findNumPairs(play) != Math.min(numPairs, numPairsInSuit)) {
                         return false;
                     }
                     
                 }
-                // TODO : check if player has any tractors in hand and play them if necessary
+                // check if player has any tractors in hand and play them if necessary
+                if (hasTractorOfLength(playerCardsInSuit, numPairs, this.trumpRank) 
+                    && !hasTractorOfLength(play, numPairs, this.trumpRank)) {
+                    return false;
+                }
             }
             return true;
         }
@@ -113,7 +168,7 @@ class Player {
         if (play.length == 1) {
             return true;
         } else if (play.length % 2 == 0) {
-            for (var i = 0; i < play.length; i=i+2) {
+            for (var i = 0; i < play.length; i+=2) {
                 // check if they are pairs
                 if (play[i] != play[i+1]) {
                     return false;
@@ -164,13 +219,27 @@ class Player {
     }
 
     /**
+     * @param {Card} card The card to check for in the player's hand.
+     * @return {boolean} true if the player has the card, false otherwise.
+     */
+    hasCard(card) {
+        var suit = this.cards[card.suit];
+        for (var c in suit) {
+            if (suit[c].equals(card)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @param {Card} card A card
      * @param {Card.SuitType} trumpSuit The suit of the trump
      * @param {Card.RankType} trumpRank The rank of the trump
      * @return {boolean} True if the card is trump, false otherwise
      */
     isTrump(card, trumpSuit, trumpRank) {
-        if (card.suit == "JOKERS") {
+        if (card.suit == SuitType.JOKERS) {
             return true;
         } else if (card.suit == trumpSuit) {
             return true;
@@ -184,9 +253,9 @@ class Player {
      * @return {boolean} True if player has trump left, false otherwise
      */
     hasTrump() {
-        for (var suit in SuitType) {
-            for (var card in this.cards[suit]) {
-                if (card.isTrump) {
+        for (var suit of Object.values(SuitType)) {
+            for (var i = 0; i < this.cards[suit].length; i++) {
+                if (this.cards[suit][i].isTrump) {
                     return true;
                 }
             }
@@ -207,20 +276,32 @@ class Player {
      */
     getTrump() {
         // TODO: implement this
-        return [];
+        var trumps = [];
+        for (let suit in SuitType) {
+            var cardsInSuit = this.cards[SuitType[suit]];
+            for (var i = 0; i < cardsInSuit.length; i++) {
+                if (cardsInSuit[i].isTrump) {
+                    trumps.push(cardsInSuit[i]);
+                }
+            }
+        }
+        return trumps;
     }
 
     /**
      * Set the players trump cards.
      */
     setTrumpCards(trumpSuit, trumpRank) {
-        for (var suit in SuitType) {
-            for (var card in this.cards[suit]) {
-                if (isTrump(card, trumpSuit, trumpRank)) {
-                    card.isTrump = true;
+        var num_trump = 0;
+        for (var suit of Object.values(SuitType)) {
+            for (var i = 0; i < this.cards[suit].length; i++) {
+                if (this.isTrump(this.cards[suit][i], trumpSuit, trumpRank)) {
+                    num_trump += 1;
+                    this.cards[suit][i].isTrump = true;
                 }
             }
         }
+        return num_trump;
     }
 
     /**
@@ -230,36 +311,6 @@ class Player {
     playCard(cards) {
         // remove cards from this.cards
     }
-};
-
-/**
- * Compares the ranks of two cards, regardless of suit. 
- * @param {Card} card1 
- * @param {Card} card2 
- * @return {number} Returns 1 if card1 < card2, -1 otherwise.
- */
-function compareRanks(card1, card2) {
-    rankOrdering = {
-        "TWO": 1,
-        "THREE": 2,
-        "FOUR": 3,
-        "FIVE": 4,
-        "SIX": 5,
-        "SEVEN": 6,
-        "EIGHT": 7,
-        "NINE": 8,
-        "TEN": 9,
-        "JACK": 10,
-        "QUEEN": 11,
-        "KING": 12,
-        "ACE": 13,
-        "SMALL": 14,
-        "BIG": 15
-    };
-    if (rankOrdering[card1.rank] < rankOrdering[card2.rank]) {
-        return -1;
-    }
-    return 1;
 };
 
 module.exports = Player;
