@@ -106,7 +106,7 @@ class Player {
                 } else if (!this.hasTrump()) {
                     return true;
                 }
-								return false;
+                                                                return false;
             } else if (startingSuit == currentPlay.suit) {
                 // suit matches
                 return true;
@@ -116,7 +116,7 @@ class Player {
             } else {
                 return false;
             }
-       	} else {
+        } else {
             // tractor of length (play.length / 2)
             const numPairs = startingPlay.length/2;
             // if non-trump tractor
@@ -292,16 +292,16 @@ class Player {
      * Set the players trump cards.
      */
     setTrumpCards(trumpSuit, trumpRank) {
-				var num_trump = 0;
+        var num_trump = 0;
         for (var suit of Object.values(SuitType)) {
             for (var i = 0; i < this.cards[suit].length; i++) {
                 if (this.isTrump(this.cards[suit][i], trumpSuit, trumpRank)) {
-										num_trump += 1;
-										this.cards[suit][i].isTrump = true;
+                    num_trump += 1;
+                    this.cards[suit][i].isTrump = true;
                 }
             }
         }
-				return num_trump;
+        return num_trump;
     }
 
     /**

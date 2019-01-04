@@ -53,65 +53,65 @@ describe('Player', function() {
                 //TODO
         })
         it('single card left, not first to play', function() {
-                var card = new Card(RankType.ACE, SuitType.SPADES, true);
-                var card2 = new Card(RankType.FIVE, SuitType.HEARTS, false);
-                player = new Player(1);
-                player.drawCard(card2);
-                
-                assert.strictEqual(player.isValidPlay([card], [card2]), true);
+            var card = new Card(RankType.ACE, SuitType.SPADES, true);
+            var card2 = new Card(RankType.FIVE, SuitType.HEARTS, false);
+            player = new Player(1);
+            player.drawCard(card2);
+            
+            assert.strictEqual(player.isValidPlay([card], [card2]), true);
 
-                var card2 = new Card(RankType.FIVE, SuitType.SPADES);
-                player = new Player(1);
-                player.drawCard(card2);
-                assert.strictEqual(player.isValidPlay([card], [card2]), true);
+            var card2 = new Card(RankType.FIVE, SuitType.SPADES);
+            player = new Player(1);
+            player.drawCard(card2);
+            assert.strictEqual(player.isValidPlay([card], [card2]), true);
 
-                var card2 = new Card(RankType.THREE, SuitType.HEARTS);
-                player = new Player(1);
-                player.drawCard(card2);
-                assert.strictEqual(player.isValidPlay([card], [card2]), true);
+            var card2 = new Card(RankType.THREE, SuitType.HEARTS);
+            player = new Player(1);
+            player.drawCard(card2);
+            assert.strictEqual(player.isValidPlay([card], [card2]), true);
 
-                var card2 = new Card(RankType.FIVE, SuitType.DIAMONDS);
-                player = new Player(1);
-                player.drawCard(card2);
-                assert.strictEqual(player.isValidPlay([card], [card2]), true); 
+            var card2 = new Card(RankType.FIVE, SuitType.DIAMONDS);
+            player = new Player(1);
+            player.drawCard(card2);
+            assert.strictEqual(player.isValidPlay([card], [card2]), true); 
         })
         it('multiple cards left, first to play', function() {
-                var card = new Card(RankType.ACE, SuitType.SPADES, true);
-                var card2 = new Card(RankType.JACK, SuitType.HEARTS, false);
-                player = new Player(1);
-                player.drawCard(card);
-                player.drawCard(card2);
+            var card = new Card(RankType.ACE, SuitType.SPADES, true);
+            var card2 = new Card(RankType.JACK, SuitType.HEARTS, false);
+            player = new Player(1);
+            player.drawCard(card);
+            player.drawCard(card2);
 
-                assert.strictEqual(player.isValidPlay([card], [card]), true); 
+            assert.strictEqual(player.isValidPlay([card], [card]), true); 
         })
         it('multiple cards left, not first to play', function() {
-                var card = new Card(RankType.ACE, SuitType.SPADES, true);
-                
-                // no card of suit
-                var card2 = new Card(RankType.FIVE, SuitType.HEARTS, false);
-                var card3 = new Card(RankType.SEVEN, SuitType.DIAMONDS, false);
-                player = new Player(1);
-                player.drawCard(card2);
-                player.drawCard(card3);
+            var card = new Card(RankType.ACE, SuitType.SPADES, true);
+            
+            // no card of suit
+            var card2 = new Card(RankType.FIVE, SuitType.HEARTS, false);
+            var card3 = new Card(RankType.SEVEN, SuitType.DIAMONDS, false);
+            player = new Player(1);
+            player.drawCard(card2);
+            player.drawCard(card3);
 
-                assert.strictEqual(player.isValidPlay([card], [card2]), true);
+            assert.strictEqual(player.isValidPlay([card], [card2]), true);
 
-                // card of suit but not played
-                var card2 = new Card(RankType.FIVE, SuitType.HEARTS, false);
-                var card3 = new Card(RankType.SEVEN, SuitType.SPADES, true);
-                player = new Player(1);
-                player.drawCard(card2);
-                player.drawCard(card3);
-                assert.strictEqual(player.isValidPlay([card], [card2]), false);
+            // card of suit but not played
+            var card2 = new Card(RankType.FIVE, SuitType.HEARTS, false);
+            var card3 = new Card(RankType.SEVEN, SuitType.SPADES, true);
+            player = new Player(1);
+            player.drawCard(card2);
+            player.drawCard(card3);
+            assert.strictEqual(player.isValidPlay([card], [card2]), false);
 
-                // card of suit and played
-                var card2 = new Card(RankType.FIVE, SuitType.HEARTS, false);
-                var card3 = new Card(RankType.SEVEN, SuitType.SPADES, true);
-                player = new Player(1);
-                player.drawCard(card2);
-                player.drawCard(card3);
+            // card of suit and played
+            var card2 = new Card(RankType.FIVE, SuitType.HEARTS, false);
+            var card3 = new Card(RankType.SEVEN, SuitType.SPADES, true);
+            player = new Player(1);
+            player.drawCard(card2);
+            player.drawCard(card3);
 
-                assert.strictEqual(player.isValidPlay([card], [card3]), true);
+            assert.strictEqual(player.isValidPlay([card], [card3]), true);
         })
         it('non trump tractor starting play, valid play', function() {
             var startingCard1 = new Card(RankType.THREE, SuitType.SPADES);
@@ -529,13 +529,13 @@ describe('Player', function() {
 
     describe('isTrump()', function() {
         it('suit is trump suit', function() {
-          var card = new Card('A', 'spades');
-          var player = new Player(1);
+            var card = new Card('A', 'spades');
+            var player = new Player(1);
 
-          assert.strictEqual(player.isTrump(card, 'hearts', '2'), false);
-          assert.strictEqual(player.isTrump(card, 'spades', '2'), true);
-          assert.strictEqual(player.isTrump(card, 'hearts', 'A'), true);
-          assert.strictEqual(player.isTrump(card, 'spades', 'A'), true);
+            assert.strictEqual(player.isTrump(card, 'hearts', '2'), false);
+            assert.strictEqual(player.isTrump(card, 'spades', '2'), true);
+            assert.strictEqual(player.isTrump(card, 'hearts', 'A'), true);
+            assert.strictEqual(player.isTrump(card, 'spades', 'A'), true);
         })
     })
 

@@ -11,14 +11,14 @@ describe('Card', function() {
             assert.strictEqual(card.suit, SuitType.SPADES);
             assert.strictEqual(card.points, 0);
         })
-				it('errors on bad rank', function() {
-						const cardInit = () => new Card(-1, SuitType.SPADES);
-						assert.throws(cardInit, Error); 
-				})
-				it('errors on bad suit', function() {
-				    const cardInit = () => new Card(RankType.ACE, "not a suit");
-						assert.throws(cardInit, Error); 
-				})
+        it('errors on bad rank', function() {
+            const cardInit = () => new Card(-1, SuitType.SPADES);
+            assert.throws(cardInit, Error); 
+        })
+        it('errors on bad suit', function() {
+            const cardInit = () => new Card(RankType.ACE, "not a suit");
+            assert.throws(cardInit, Error); 
+        })
     })
     describe('getCardValue', function() {
         it('correctly gets card value', function() {

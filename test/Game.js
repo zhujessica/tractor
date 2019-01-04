@@ -13,7 +13,7 @@ describe('Game', function() {
         var player4 = new Player(4);
         var game = new Game([player1, player2, player3, player4]);
 
-                it('one trump one non trump', function() {  
+        it('one trump one non trump', function() {  
             game.trumpRank = 2;
             game.trumpSuit = SuitType.CLUBS;
             var card1 = new Card(RankType.THREE, SuitType.CLUBS);
@@ -127,7 +127,6 @@ describe('Game', function() {
 
             // numerical skip trump rank
             assert.strictEqual(game.isNextHighestValue(card8, card9), true);
-            
         })
     })
 
