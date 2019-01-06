@@ -30,7 +30,7 @@ li a {
   text-decoration: none;
   color: #000;
   display: block;
-  width: 200px;
+  width: 600px;
  
   -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;
   -moz-transition: font-size 0.3s ease, background-color 0.3s ease;
@@ -40,6 +40,26 @@ li a {
 }
  
 li a:hover {
-  font-size: 30px;
+  /*font-size: 30px;*/
+  cursor: pointer;
+  opacity: 0.5;
   background: #f6f6f6;
+}
+
+#roomName {
+  height:30px;
+  font: 150 15px/1.5 Helvetica, Verdana, sans-serif;
+}
+
+#createRoom {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  height: 30px;
+  background: white;
+}
+
+#createRoom:hover {
+  background:#f6f6f6;/*
+  border-top: 1px solid #f6f6f6
+  border-bottom: 1px solid #f6f6f6;*/
 }

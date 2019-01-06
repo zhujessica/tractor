@@ -32,9 +32,15 @@ var clients = {};
 var count = 0;
 var lastSocket = 0;
 var currentGames = {
-  'lit times': {'owner': 'daniel', 'numPeople': '1'},
-  'okay room': {'owner': 'daniel', 'numPeople': '1'}
+  'lit times': {'owner': 'test', 'players': ['test'], 'id': '11111'},
+  'okay room': {'owner': 'test', 'players': ['test'], 'id': '22222'}
 };
+var currentIds = {
+  '11111': 'lit times',
+  '22222': 'okay room'  
+}
+
+const ID_ATTEMPT_LIMIT = 1000;
 
 var currentPlayers = {};
 
@@ -52,19 +58,39 @@ io.on('connection', function(socket){       // Whenever socket.io detects a new 
 
   console.log("Socket " + socket.id + " has connected");
 
+  // When a new user enters the lobby, list the rooms available in the lobby
+  // to the user
   socket.on('enter lobby', function(username) {
     console.log(username + " has entered the lobby");
     io.sockets.connected[socket.id].emit('generate rooms', currentGames);
   });
 
+  // When the new user tries to create a new room, it checks if it's valid,
+  // creates a new id, then emits to all socket connections about this new room
   socket.on('new room', function(roomName, username) {
     console.log(username + " trying to create room " + roomName);
     if (roomName in currentGames) {
       io.sockets.connected[socket.id].emit('failed room', roomName);
     } else {
-      let gameDetails = {'owner': username, 'numPeople': '1'};
-      currentGames[roomName] = gameDetails;
-      io.emit('new room', {'name': roomName, 'details': gameDetails});
+      let currentCount = 0
+      let randomId = Math.round(Math.random()*10000);
+      while (randomId in currentIds) {
+        randomId = Math.round(Math.random()*10000);
+        currentCount += 1;
+        if (currentCount > ID_ATTEMPT_LIMIT)  {
+          randomId = "FAIL";
+          break
+        }
+      }
+
+      if (randomId == "FAIL") {
+        io.sockets.connected[socket.id].emit('failed room id');
+      } else {
+        let gameDetails = {'owner': username, 'players': [username], 'id': randomId};
+        currentIds[randomId] = roomName;
+        currentGames[roomName] = gameDetails;
+        io.emit('new room', {'name': roomName, 'details': gameDetails});
+      }
     }
   });
 

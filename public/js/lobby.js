@@ -14,7 +14,7 @@ $(function () {
 	    var gameRooms = $(".gameList");
 
 	    for (var room in rooms){
-	    	gameRooms.append("<li><a>" + room + " owner: " + rooms[room].owner + "</li></a>");
+	    	gameRooms.append("<li><a><b>" + room + "</b> &emsp; owner: " + rooms[room].owner + " &emsp; url: " + rooms[room].id + "</a></li>");
     };
 
     $("#createRoom").click(function() {
@@ -32,10 +32,14 @@ $(function () {
     	alert("Room name " + roomName + " already exists!");
     });
 
+    socket.on('failed room id', function() {
+        alert("Literally every room id is taken hopefully this never happens");
+    });
+
     socket.on('new room', function(newGame) {
     	let gameName = newGame['name'];
     	let gameDetails = newGame['details'];
-    	gameRooms.append("<li><a>" + gameName + " owner: " + gameDetails.owner + "</li></a>");
+    	gameRooms.append("<li><a><b>" + gameName + "</b> &emsp; owner: " + gameDetails.owner + " &emsp; url: " + gameDetails['id'] + "</a></li>");
     })
 
 })
