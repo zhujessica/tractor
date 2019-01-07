@@ -39,18 +39,20 @@ var currentGames = {
 var currentPlayers = {};
 
 io.on('connection', function(socket){       // Whenever socket.io detects a new connection, this function runs.
-  console.log("OHHHH BOY HERE WE GO")
   if (!(socket.id in clients)){
   	count += 1;
-  	console.log("New player connected");          // this particular instance is given the variable name "socket"
   	clients[socket.id] = "player" + count.toString();
   }
 
+  console.log("SOCKET " + socket.id + " has connected");
   console.log(clients);
-
   lastSocket = socket.id;
 
-  console.log("Socket " + socket.id + " has connected");
+  // random thought: MAKE THE LOBBY PAGE A FORM TOO SO YOU CAN PASS THE USERNAME TOO INTO THE ROUTE TOO??
+  socket.on('I joined room', function(roomName) {
+    // when a new user enters the room, everyone in the room should get notified
+    io.sockets.connected[socket.id].emit('I joined room', clients[socket.id]);
+  });
 
   socket.on('enter lobby', function(username) {
     console.log(username + " has entered the lobby");

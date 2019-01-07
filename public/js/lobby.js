@@ -14,7 +14,7 @@ $(function () {
 	    var gameRooms = $(".gameList");
 
 	    for (var room in rooms){
-	    	gameRooms.append("<li><a>" + room + " owner: " + rooms[room].owner + "</li></a>");
+	    	gameRooms.append("<li><a class='room' href='/room/" + room + "'>" + room + " <br> owner: " + rooms[room].owner + "</li></a>");
     };
 
     $("#createRoom").click(function() {
@@ -35,8 +35,15 @@ $(function () {
     socket.on('new room', function(newGame) {
     	let gameName = newGame['name'];
     	let gameDetails = newGame['details'];
-    	gameRooms.append("<li><a>" + gameName + " owner: " + gameDetails.owner + "</li></a>");
-    })
-
-})
+    	gameRooms.append("<li><a class='room' href='/room/" + gameName + "'>" + gameName + " owner: " + gameDetails.owner + "</li></a>");
+    });
+  })
 });
+
+// $(document).ready(function() {
+//   $(document).on("click", ".room", function(){
+//     var jQueryRoom = $(this);
+//     var roomName = jQueryRoom[0].id;
+//     console.log("You clicked on room " + roomName);
+//   });
+// });
