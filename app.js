@@ -108,19 +108,19 @@ io.on('connection', function(socket){       // Whenever socket.io detects a new 
   } else if (!isNaN(urlLastPath)) {
     // Indicates that we are inside a room with a specific url
     return
+  } else {
+
+    socket.on('card clicked', function(cardInfo) {
+      console.log('Card Clicked: ' + cardInfo);                // We print the statement in the console and
+      io.emit('card clicked', [cardInfo[0], cardInfo[1]]); // io.emit sends this message to EVERYONE connected
+    });
+
+    socket.on('chat message', function(msg){  // If the socket that is connected sends a 'chat message'
+      console.log('message: ' + msg);         // We print the statement in the console and
+      console.log('players active: ' + Object.values(clients))
+      io.emit('chat message', [clients[socket.id], msg]);           // io.emit sends this message to EVERYONE connected
+      io.sockets.connected[lastSocket].emit("secret-message", msg[1]);
+      // io.sockets.connected[clients.mheap.socket].emit('private-message',
+    });
   }
-
-  //   socket.on('card clicked', function(cardInfo) {
-  //     console.log('Card Clicked: ' + cardInfo);                // We print the statement in the console and
-  //     io.emit('card clicked', [cardInfo[0], cardInfo[1]]); // io.emit sends this message to EVERYONE connected
-  //   });
-
-  //   socket.on('chat message', function(msg){  // If the socket that is connected sends a 'chat message'
-  //     console.log('message: ' + msg);         // We print the statement in the console and
-  //     console.log('players active: ' + Object.values(clients))
-  //     io.emit('chat message', [clients[socket.id], msg]);           // io.emit sends this message to EVERYONE connected
-  //     io.sockets.connected[lastSocket].emit("secret-message", msg[1]);
-  //     // io.sockets.connected[clients.mheap.socket].emit('private-message',
-  //   });
-  // }
 })
