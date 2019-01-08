@@ -18,6 +18,15 @@ router.post('/lobby', function(req, res) {
   });
 });
 
+/* post game room page. */
+router.post('/:gameid', function(req, res) {
+  var id = req.params.gameid;
+
+  res.render('room', {
+    id: id
+  });
+});
+
 /* GET home page. */
 router.get('/test', function(req, res) {
   console.log(req.body);

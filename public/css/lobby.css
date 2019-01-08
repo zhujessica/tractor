@@ -40,7 +40,6 @@ li a {
 }
  
 li a:hover {
-  /*font-size: 30px;*/
   cursor: pointer;
   opacity: 0.5;
   background: #f6f6f6;
@@ -59,7 +58,5 @@ li a:hover {
 }
 
 #createRoom:hover {
-  background:#f6f6f6;/*
-  border-top: 1px solid #f6f6f6
-  border-bottom: 1px solid #f6f6f6;*/
+  background:#f6f6f6;
 }
