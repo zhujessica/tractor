@@ -46,7 +46,7 @@ const ID_ATTEMPT_LIMIT = 1000;
 // but validating between frontend and backend is annoying so might do later
 
 io.on('connection', function(socket){       // Whenever socket.io detects a new connection, this function runs.
-  
+
   // This variable tells you the last part of the current url, e.g. 'lobby'
   var urlLastPath = socket.client.request.headers['referer'].split("/").pop();
 
