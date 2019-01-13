@@ -19,10 +19,14 @@ router.post('/lobby', function(req, res) {
 
 /* post game room page. */
 router.post('/:gameid', function(req, res) {
-  var id = req.params.gameid;
+  var gameid = req.params.gameid;
+  var username = req.body.username
+  console.log(gameid)
+  console.log(username)
 
   res.render('room', {
-    id: id
+    gameid: gameid,
+    username: username
   });
 });
 

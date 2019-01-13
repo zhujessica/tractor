@@ -7,12 +7,14 @@ const cleanInput = (input) => {
     return $('<div/>').text(input).html();
 }
 
-function post() {
+function post(gameid) {
 
     var form = $('<form></form>');
 
+    console.log("THIS ID IS " + gameid)
+
     form.attr("method", "post");
-    form.attr("action", $(this).attr('id'));
+    form.attr("action", "/" + gameid);
 
     var usernameField = $('<input></input>');
 
@@ -22,21 +24,29 @@ function post() {
 
     form.append(usernameField);
 
-    // The form needs to be a part of the document in
-    // order for us to be able to submit it.
     $(document.body).append(form);
     form.submit();
 };
 
+// Function called whenever a room is clicked on to try to enter
+function socketClickNotify() {
+    socket.emit("join game room", {'gameid':$(this).attr('id'), 'username':username});
+};
+
 $(function () {
+    // When the current user enters the lobby, generate all the rooms
+    // that are currently on the server
 	socket.on('generate rooms', function(rooms) {
 	    console.log(username);
 	    console.log(rooms);
 	    var gameRooms = $(".gameList");
 
-	    for (var room in rooms){
-	    	gameRooms.append("<li id=\"" + rooms[room].id + "\"><a><b>" + room + "</b> &emsp; owner: " + rooms[room].owner + " &emsp; url: " + rooms[room].id + "</a></li>");
-    };
+	    for (var gameid in rooms){
+            room = rooms[gameid]
+	    	gameRooms.append("<li id=\"" + gameid + "\"><a><b>" + room['name'] + "</b> &emsp; owner: " + room['owner'] + " &emsp; url: " + gameid + "</a></li>");
+            $("#" + gameid).click(socketClickNotify);
+        }
+    });
 
     $("#createRoom").click(function() {
     	var roomName = cleanInput($("#roomName").val().trim());
@@ -58,25 +68,23 @@ $(function () {
     });
 
     socket.on('new room', function(newGame) {
-    	let gameName = newGame['name'];
+        let gameId = newGame['gameid'];
     	let gameDetails = newGame['details'];
-        let gameId = gameDetails['id']
+        let gameName = gameDetails['name']
+
+        var gameRooms = $(".gameList");
     	gameRooms.append("<li id=\"" + gameId + "\"><a><b>" + gameName + "</b> &emsp; owner: " + gameDetails.owner + " &emsp; url: " + gameId + "</a></li>");
-        $("#" + gameId).click(post)
-    })
+        $("#" + gameId).click(socketClickNotify);
+    });
 
-    // ONLY FOR TESTING PURPOSES - set a click handler for the existing list items (test rooms)
-    $("li").click(post)
-    
+    socket.on('full room', function(gameid) {
+        alert("Room " + gameid + " is full");
+    });
 
+    socket.on('enter game room', function(gameid) {
+        console.log('about to enter room');
+        post(gameid);
+    });
 
-    // $("li").click(function() {
-    //     var roomId = $(this).get(0).id;
-    //     const data = {username:'test'};
-    //     $.post("/lobby", data, function(data, success) {
-    //         alert("Data: " + data + "\nStatus: " + status);
-    //     })
-    // }
-
-    })
 });
+
