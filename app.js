@@ -66,17 +66,48 @@ io.on('connection', function(socket){
 
   // This variable tells you the last part of the current url, e.g. 'lobby'
   var urlLastPath = socket.client.request.headers['referer'].split("/").pop();
+  console.log("THE URL THINGY IS a" + urlLastPath + "a");
+  console.log(socket.client.request.headers['referer']);
+
+  //
+  //
+  // Case: Entering home screen, where you enter username
+  if (urlLastPath == "") {
+    socket.on('new username', function(username) {
+      var currentUsers = new Set();
+      for (var gameId in currentGames) {
+        var playerList = currentGames[gameId]['players'];
+        for (var i = 0; i < playerList.length; i++) {
+          currentUsers.add(playerList[i].username);
+        }
+      }
+
+      for (var socketId in currentLobbyClients) {
+        currentUsers.add(currentLobbyClients[socketId]);
+      }
+
+      if (currentUsers.has(username)) {
+        socket.emit('username invalid', username);
+      } else {
+        socket.emit('username valid', username);
+      }
+
+    });
+  }
+  // END home
+  //
+  //
 
   //
   //
   // Case: Entering the game lobby, where all the rooms exist
-  if (urlLastPath == "lobby") {
+  else if (urlLastPath == "lobby") {
 
     // When a new user enters the lobby, list the rooms available in the lobby
     // to the user
     socket.on('enter lobby', function(username) {
       if (Object.values(currentLobbyClients).includes(username)) {
-        console.log(username + " (a second one) has entered the lobby");
+        console.log(username + " (another one) has entered the lobby");
       } else {
         console.log(username + " has entered the lobby");
       }
@@ -145,8 +176,6 @@ io.on('connection', function(socket){
 
       // If enough space, add the new player and tell socket to enter room
       else {
-        var newPlayer = new Player(username, socket.id);
-        currentPlayers.push(newPlayer)
         io.sockets.connected[socket.id].emit('enter game room', gameid);
       }
     });
@@ -168,6 +197,44 @@ io.on('connection', function(socket){
   else if (!isNaN(urlLastPath)) {
     console.log("entering room with id " + urlLastPath);
     console.log(currentGames[urlLastPath]);
+
+    var currentPlayer = null;
+    var currentGameId = urlLastPath;
+
+    socket.on('joined game room', function(userInfo) {
+      var username = userInfo['username'];
+      var gameid = userInfo['gameid'];
+      var players = currentGames[gameid]['players'];
+      var newPlayer = new Player(username, socket.id);
+      players.push(newPlayer)
+
+      currentPlayer = newPlayer;
+
+      console.log(username + " has entered room")
+      // io.sockets.connected[socket.id].emit('generate players', currentGames[gameid]['players']);
+      socket.emit('generate players', players);
+      for (var i = 0; i < players.length; i++) {
+        let socketId = players[i].socketId;
+        if (socketId != socket.id) {
+          console.log('yeah i just broadcast to ' + socketId);
+          socket.broadcast.to(socketId).emit('add new player', username);
+        }
+      }
+    });
+
+    socket.on('disconnect', function() {
+      var players = currentGames[currentGameId]['players'];
+
+      // Removes the player from currentGames
+      const indexToRemove = players.indexOf(currentPlayer);
+      players.splice(indexToRemove, 1);
+
+      // Updates the html of each player inside the room
+      for (var i = 0; i < players.length; i++) {
+        socket.broadcast.to(players[i].socketId).emit('player left room', currentPlayer);  
+      }
+    }) 
+
   } 
   // END game room 
   //

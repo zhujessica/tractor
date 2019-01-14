@@ -10,13 +10,16 @@
     <link rel="stylesheet" type="text/css" href="css/lobby.css">
 
     <script>
-      var gameid = {{gameid}};
-      var username = "{{username}}"
+      var gameid = "{{gameid}}";
+      var username = "{{username}}";
     </script>
   </head>
   <body>
 
-    <h1> It's a yeet from me, {{gameid}}  </h1>
+    <h1> Game {{gameid}}  </h1>
+    <ul class='players'>
+
+    </ul>
 
   <script src="/js/room.js"></script>
   </body>

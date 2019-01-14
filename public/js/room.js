@@ -1,6 +1,6 @@
 var socket = io();
 
-socket.emit('ha ha ha');
+socket.emit('joined game room', {'gameid':gameid, 'username':username});
 
 // myNumber = 0;
 
@@ -11,8 +11,25 @@ $(function () {
     myNumber = myNumber;
   });
 
-  socket.on('full room', function(gameDetails) {
-    
-  })
+  // Generate all players that inside the room right now
+  socket.on('generate players', function(playerList){
+    var players = $(".players");
+    for (var i = 0; i < playerList.length; i++) {
+      players.append("<li>" + playerList[i].username + "</li>");
+    }
+  });
+
+  // Whenever a new player joins, add the username to the list of players
+  socket.on('add new player', function(username) {
+    var players = $(".players");
+    players.append("<li id=\"" + username + "\">" + username + "</li>");
+  });
+
+  // When another player leaves the room, remove the html for now
+  socket.on('player left room', function(player) {
+    var username = player.username;
+    document.getElementById(username).outerHTML = "";
+  });
+
 
 });
