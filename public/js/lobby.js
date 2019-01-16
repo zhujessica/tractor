@@ -43,7 +43,7 @@ $(function () {
 
 	    for (var gameid in rooms){
             room = rooms[gameid]
-	    	gameRooms.append("<li id=\"" + gameid + "\"><a><b>" + room['name'] + "</b> &emsp; owner: " + room['owner'] + " &emsp; url: " + gameid + "</a></li>");
+	    	gameRooms.append("<li id=\"" + gameid + "\"><a><b>" + room['name'] + "</b> &emsp; owner: " + room['owner'].username + " &emsp; url: " + gameid + "</a></li>");
             $("#" + gameid).click(socketClickNotify);
         }
     });
@@ -73,7 +73,7 @@ $(function () {
         let gameName = gameDetails['name']
 
         var gameRooms = $(".gameList");
-    	gameRooms.append("<li id=\"" + gameId + "\"><a><b>" + gameName + "</b> &emsp; owner: " + gameDetails.owner + " &emsp; url: " + gameId + "</a></li>");
+    	gameRooms.append("<li id=\"" + gameId + "\"><a><b>" + gameName + "</b> &emsp; owner: " + gameDetails.owner.username + " &emsp; url: " + gameId + "</a></li>");
         $("#" + gameId).click(socketClickNotify);
     });
 
@@ -82,6 +82,7 @@ $(function () {
     });
 
     socket.on('enter game room', function(gameid) {
+        console.log("stage 7")
         console.log('about to enter room');
         post(gameid);
     });

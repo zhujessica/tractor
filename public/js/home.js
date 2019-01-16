@@ -22,22 +22,21 @@ function post(username) {
 
 $(function () {
 	$("#submitButton").click(function() {
-		socket.emit('new username', $("#username")[0].value);
+		var username = $("#username")[0].value;
+
+		// Checks to see if the username is valid
+		if (!(/^[0-9a-zA-Z]+$/.test(username) && username.length <= 12)) {
+			alert("Username is invalid (at most 12 characters, must be alphanumeric)");
+	    } else {
+			socket.emit('new username', username);
+		}
 	}); 
 
 	socket.on('username valid', function(username) {
 		post(username);
 	});
 
-	socket.on('username invalid', function(username) {
+	socket.on('username taken', function(username) {
 		alert(username + " is already taken");
 	});
 });
-
-// function validateForm() {
-// 	var x = document.forms["form_name"]["fname"].value;
-//   	if (x == "") {
-// 	    alert("Name is already taken!");
-// 	    return false;
-// 	  }
-// }

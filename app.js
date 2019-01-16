@@ -39,24 +39,29 @@ class Player {
   }
 }
 
-// contains about:
-// owner - username of the owner
-// players - username and socket id of the current players inside the room 
-// name - name of the game room
-
 var testPlayer1 = new Player('test', 1)
 var testPlayer2 = new Player('test', 2)
 
+// currentGames contains:
+// key - id of the game room
+// owner - username and socketid of the owner
+// players - username and socket id of the current players inside the room 
+// name - name of the game room
 var currentGames = {
-  '11111': {'owner': 'test', 'players': [testPlayer1], 'name':'lit times' },
-  '22222': {'owner': 'test', 'players': [testPlayer2], 'name':'okay room'}
+  '11111': {'owner': testPlayer1, 'players': [testPlayer1], 'name':'lit times' },
+  '22222': {'owner': testPlayer2, 'players': [testPlayer2], 'name':'okay room'}
 };
+
+// Just a list of current game ids in the lobby mapping to their room name
 var currentIds = {
   '11111': 'lit times',
   '22222': 'okay room'  
 }
 
+// The max number of room IDs that can exist
 const MAX_ROOMS = 100000;
+
+// The number of times the random ID generator will try to create an ID
 const ID_ATTEMPT_LIMIT = 1000;
 
 // There is an issue where you can have multiple users with the same username 
@@ -74,6 +79,8 @@ io.on('connection', function(socket){
   // Case: Entering home screen, where you enter username
   if (urlLastPath == "") {
     socket.on('new username', function(username) {
+
+      // Accumulates all the players inside the lobby and inside game rooms
       var currentUsers = new Set();
       for (var gameId in currentGames) {
         var playerList = currentGames[gameId]['players'];
@@ -86,8 +93,10 @@ io.on('connection', function(socket){
         currentUsers.add(currentLobbyClients[socketId]);
       }
 
+      // If the username already exists, alerts user to make new username, else 
+      // take them to the lobby
       if (currentUsers.has(username)) {
-        socket.emit('username invalid', username);
+        socket.emit('username taken', username);
       } else {
         socket.emit('username valid', username);
       }
@@ -118,7 +127,7 @@ io.on('connection', function(socket){
         currentLobbyClients[socket.id] = username;
       }
 
-      io.sockets.connected[socket.id].emit('generate rooms', currentGames);
+      socket.emit('generate rooms', currentGames);
     });
 
     // When the new user tries to create a new room, it checks if it's valid,
@@ -130,13 +139,21 @@ io.on('connection', function(socket){
         currentNames.push(currentGames[gameid]['name'])
       }
 
+      console.log("stage 1")
       // Checks if the room name already exists
       if (roomName in currentNames) {
+        console.log("stage 2")
         io.sockets.connected[socket.id].emit('failed room', roomName);
       } 
       // If valid, create a random id, create a default room, and communicate to clients
       // about creation of new room
       else {
+        console.log("stage 3")
+
+        // Generates a random room ID
+        // Note: it only tries ID_ATTEMPT_LIMIT times at a random ID
+        // Probability-wise, it's almost impossible to fail unless almost all
+        // room IDs are taken
         let currentCount = 0
         let randomId = Math.round(Math.random()*MAX_ROOMS);
         while (randomId in currentIds) {
@@ -148,16 +165,24 @@ io.on('connection', function(socket){
           }
         }
 
+        // If all the random ID's that were generated are taken
         if (randomId == "FAIL") {
-          io.sockets.connected[socket.id].emit('failed room id');
+          console.log("stage 4")
+          socket.emit('failed room id');
         } else {
+          console.log("stage 5")
           let gameDetails = {'owner': username, 'players': [], 'name': roomName};
           
           // NOTE: kind of a useless variable
           currentIds[randomId] = roomName;
-
           currentGames[randomId] = gameDetails;
-          io.emit('new room', {'gameid': randomId, 'details': gameDetails});
+
+          // Tells all other players about this new room
+          socket.broadcast.emit('new room', {'gameid': randomId, 'details': gameDetails});
+
+          console.log("stage 6")
+          // Forces the owner to join the room that they created
+          socket.emit('enter game room', randomId);
         }
       }
     });
@@ -171,12 +196,12 @@ io.on('connection', function(socket){
 
       // Checks if there is enough space for a player to join
       if (currentPlayers.length >= 4) {
-        io.sockets.connected[socket.id].emit('full room', gameid);
+        socket.emit('full room', gameid);
       } 
 
       // If enough space, add the new player and tell socket to enter room
       else {
-        io.sockets.connected[socket.id].emit('enter game room', gameid);
+        socket.emit('enter game room', gameid);
       }
     });
 
@@ -204,15 +229,23 @@ io.on('connection', function(socket){
     socket.on('joined game room', function(userInfo) {
       var username = userInfo['username'];
       var gameid = userInfo['gameid'];
-      var players = currentGames[gameid]['players'];
+      var game = currentGames[gameid];
+      var players = game['players'];
+      var owner = game['owner']
       var newPlayer = new Player(username, socket.id);
       players.push(newPlayer)
+
+      // This is the case where the owner of the room first joins the room
+      if (owner == username) {
+        game['owner'] = newPlayer;
+      }
 
       currentPlayer = newPlayer;
 
       console.log(username + " has entered room")
-      // io.sockets.connected[socket.id].emit('generate players', currentGames[gameid]['players']);
-      socket.emit('generate players', players);
+      socket.emit('generate players', players, owner);
+
+      // Tells every player inside the room to add the new player to their html
       for (var i = 0; i < players.length; i++) {
         let socketId = players[i].socketId;
         if (socketId != socket.id) {
@@ -220,18 +253,47 @@ io.on('connection', function(socket){
           socket.broadcast.to(socketId).emit('add new player', username);
         }
       }
+
+      console.log('there are ' + players.length + ' current players now');
+
+      // If there are enough players, allow the owner to start the game
+      if (players.length == 4) {
+        console.log('broadcasted the start game');
+        socket.broadcast.to(currentGames[gameid]['owner'].socketId).emit('allow start');
+      } else {
+        socket.broadcast.to(currentGames[gameid]['owner'].socketId).emit('cant start');
+      }
+
     });
 
+    // Player disconnects from the game room
     socket.on('disconnect', function() {
+      var ownerSocketId = currentGames[currentGameId]['owner'].socketId
       var players = currentGames[currentGameId]['players'];
 
       // Removes the player from currentGames
       const indexToRemove = players.indexOf(currentPlayer);
       players.splice(indexToRemove, 1);
+ 
+      // If the owner leaves, remove the game from the lobby and
+      // tell all players in the room to leave the room
+      if (ownerSocketId == socket.id) {
+        for (var i = 0; i < players.length; i++) {
+          socket.broadcast.to(players[i].socketId).emit('closed room');  
+        }
 
-      // Updates the html of each player inside the room
-      for (var i = 0; i < players.length; i++) {
-        socket.broadcast.to(players[i].socketId).emit('player left room', currentPlayer);  
+        delete currentGames[currentGameId];
+        delete currentIds[currentGameId];
+
+      } else {
+        // Updates the html of each player inside the room
+        for (var i = 0; i < players.length; i++) {
+          console.log('told to delete player for ' + players[i].username);
+          socket.broadcast.to(players[i].socketId).emit('player left room', currentPlayer);  
+        }
+
+        // Remove the start game button if it's there
+        socket.broadcast.to(ownerSocketId).emit('cant start');
       }
     }) 
 
