@@ -12,10 +12,15 @@ $(function () {
   });
 
   // Generate all players that inside the room right now
-  socket.on('generate players', function(playerList){
+  socket.on('generate players', function(playerList, owner){
     var players = $(".players");
     for (var i = 0; i < playerList.length; i++) {
-      players.append("<li>" + playerList[i].username + "</li>");
+      var username = playerList[i].username;
+      players.append("<li id=\"" + username + "\">" + username + "</li>");
+    }
+
+    if (username == owner.username) {
+      $('#title').text($('#title').text() + " (Owner)");
     }
   });
 
@@ -31,5 +36,21 @@ $(function () {
     document.getElementById(username).outerHTML = "";
   });
 
+  socket.on('allow start', function() {
+    console.log('received the signal to start');
+    $("body").append("<button type='button' id='startButton'>Start Game</button>");
+  });
+
+  // Removes the start button if it's allowed
+  socket.on('cant start', function() {
+    var startButton = document.getElementById("startButton");
+    if (startButton) {
+      startButton.outerHTML = "";
+    }
+  });
+
+  socket.on('closed room', function() {
+    // SOME LOGIC THAT TAKES YOU BACK TO THE LOBBY
+  });
 
 });
