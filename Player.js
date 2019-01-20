@@ -152,12 +152,6 @@ class Player {
                     
                 }
                 // check if player has any tractors in hand and play them if necessary
-                console.log('xd');
-                console.log(playerCardsInSuit.map(x => String(x.rank) + String(x.suit)));
-                console.log(String(hasTractorOfLength(playerCardsInSuit, numPairs, this.trumpRank)));
-                console.log(String(hasTractorOfLength(play, numPairs, this.trumpRank)));
-                console.log("WTF");
-                
                 if (hasTractorOfLength(playerCardsInSuit, numPairs, this.trumpRank) 
                     && !hasTractorOfLength(play, numPairs, this.trumpRank)) {
                     return false;
