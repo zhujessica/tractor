@@ -35,7 +35,7 @@ class Player {
      */
     sortCards() {
         for (var suit in SuitType) {
-            this.cards[suit].sort(compareRanks);
+            this.cards[SuitType[suit]].sort(compareRanks);
         }
     }
 

@@ -6,9 +6,9 @@ var assert = require('chai').assert;
 describe('Player', function() {
     describe('drawCard', function() {
         it('adds new card to hand', function() {    
-            var card = new Card(RankType.ACE, SuitType.SPADES, true);
-            var card2 = new Card(RankType.JACK, SuitType.HEARTS, false);
-            var card3 = new Card(RankType.TWO, SuitType.DIAMONDS, false);
+            var card = new Card(RankType.ACE, SuitType.SPADES);
+            var card2 = new Card(RankType.JACK, SuitType.HEARTS);
+            var card3 = new Card(RankType.TWO, SuitType.DIAMONDS);
             
             var player = new Player(1);
             
@@ -18,6 +18,50 @@ describe('Player', function() {
             assert.deepEqual(player.cards[SuitType.HEARTS], [card2]);
             player.drawCard(card3);
             assert.deepEqual(player.cards[SuitType.DIAMONDS], [card3]);
+        })
+    })
+
+    describe('sortCards', function() {
+        it('sorts one suit', function() {
+            var card = new Card(RankType.TWO, SuitType.SPADES);
+            var card2 = new Card(RankType.THREE, SuitType.SPADES);
+            var card3 = new Card(RankType.KING, SuitType.SPADES);
+            var player = new Player(1);
+
+            player.drawCard(card2);
+            player.drawCard(card3);
+            player.drawCard(card);
+            player.sortCards();
+ 
+            expectedRanks = [RankType.TWO, RankType.THREE, RankType.KING];
+            actualRanks = player.cards[SuitType.SPADES].map(x => x.rank);
+
+            assert.deepEqual(actualRanks, expectedRanks);
+        })
+        it('sorts multiple suits', function() {
+            var card = new Card(RankType.TWO, SuitType.SPADES);
+            var card2 = new Card(RankType.THREE, SuitType.SPADES);
+            var card3 = new Card(RankType.KING, SuitType.SPADES);
+            var card4 = new Card(RankType.FIVE, SuitType.HEARTS);
+            var card5 = new Card(RankType.SEVEN, SuitType.HEARTS);
+            var player = new Player(1);
+
+            player.drawCard(card2);
+            player.drawCard(card3);
+            player.drawCard(card);
+            player.drawCard(card5);
+            player.drawCard(card4);
+            player.sortCards();
+ 
+            var expectedRanks = [RankType.TWO, RankType.THREE, RankType.KING];
+            var actualRanks = player.cards[SuitType.SPADES].map(x => x.rank);
+
+            assert.deepEqual(actualRanks, expectedRanks);
+
+            expectedRanks = [RankType.FIVE, RankType.SEVEN];
+            actualRanks = player.cards[SuitType.HEARTS].map(x => x.rank);
+            
+            assert.deepEqual(actualRanks, expectedRanks);
         })
     })
 
