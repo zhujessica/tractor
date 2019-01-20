@@ -32,21 +32,10 @@ server.listen(3000, function() {
 var currentLobbyClients = {};
 var currentLobbyCount = 0;
 
-
-// class Player {
-//   constructor(username, socketId) {
-//     this.username = username;
-//     this.socketId = socketId;
-//   }
-// }
-<<<<<<< HEAD
-=======
-
 // contains about:
 // owner - username of the owner
 // players - username and socket id of the current players inside the room 
 // name - name of the game room
->>>>>>> 59c9dae2f0eda29dba87ffa881c102d1afb3f1ad
 
 var testPlayer1 = new Player('test', 1)
 var testPlayer2 = new Player('test', 2)
