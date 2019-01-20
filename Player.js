@@ -9,7 +9,7 @@ class Player {
      * @param {number} id Player ID (IDs of 1 and 3 are a team, 2 and 4 are a team)
      * and the whole game is won when a Player on level Ace wins the round)
      */
-    constructor(username, id) {
+    constructor(id, username) {
         this.username = username;
         this.id = id;
         this.banker = false; // by default, not banker
