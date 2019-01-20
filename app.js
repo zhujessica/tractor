@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var hbs = require('express-handlebars');
 var bodyParser = require('body-parser');
+var Player = require('./Player.js');
 
 // Initialize App
 var app = express();
@@ -32,12 +33,12 @@ var currentLobbyClients = {};
 var currentLobbyCount = 0;
 
 
-class Player {
-  constructor(username, socketId) {
-    this.username = username;
-    this.socketId = socketId;
-  }
-}
+// class Player {
+//   constructor(username, socketId) {
+//     this.username = username;
+//     this.socketId = socketId;
+//   }
+// }
 
 var testPlayer1 = new Player('test', 1)
 var testPlayer2 = new Player('test', 2)
@@ -201,7 +202,15 @@ io.on('connection', function(socket){
 
       // If enough space, add the new player and tell socket to enter room
       else {
-        socket.emit('enter game room', gameid);
+        var newPlayer = new Player(username, socket.id);
+        currentPlayers.push(newPlayer)
+        io.sockets.connected[socket.id].emit('enter game room', gameid);
+
+        // If a room is full, tell the owner to start the game
+        if (currentPlayers.length == 4) {
+          // Add start button logic here
+          io.sockets.connected[currentPlayers[3].id].emit('start room', gameid, currentPlayers);
+        }
       }
     });
 
