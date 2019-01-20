@@ -10,7 +10,7 @@ describe('Player', function() {
             var card2 = new Card(RankType.JACK, SuitType.HEARTS);
             var card3 = new Card(RankType.TWO, SuitType.DIAMONDS);
             
-            var player = new Player(1);
+            var player = new Player(1, 'user1');
             
             player.drawCard(card);
             assert.deepEqual(player.cards[SuitType.SPADES], [card]);
@@ -26,7 +26,7 @@ describe('Player', function() {
             var card = new Card(RankType.TWO, SuitType.SPADES);
             var card2 = new Card(RankType.THREE, SuitType.SPADES);
             var card3 = new Card(RankType.KING, SuitType.SPADES);
-            var player = new Player(1);
+            var player = new Player(1, 'user1');
 
             player.drawCard(card2);
             player.drawCard(card3);
@@ -44,7 +44,7 @@ describe('Player', function() {
             var card3 = new Card(RankType.KING, SuitType.SPADES);
             var card4 = new Card(RankType.FIVE, SuitType.HEARTS);
             var card5 = new Card(RankType.SEVEN, SuitType.HEARTS);
-            var player = new Player(1);
+            var player = new Player(1, 'user1');
 
             player.drawCard(card2);
             player.drawCard(card3);
@@ -71,13 +71,13 @@ describe('Player', function() {
 
             // plays same suit as original
             var card2 = new Card(RankType.THREE, SuitType.SPADES);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card2);
             assert.strictEqual(player.isValidPlay([card], [card2]), true);
 
             // plays different non trump suit from original, when player is void in original suit
             var card2 = new Card(RankType.THREE, SuitType.DIAMONDS);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card2);
             assert.strictEqual(player.isValidPlay([card], [card2]), true);
 
@@ -90,30 +90,30 @@ describe('Player', function() {
         it('single card left, not first to play', function() {
             var card = new Card(RankType.ACE, SuitType.SPADES);
             var card2 = new Card(RankType.FIVE, SuitType.HEARTS);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card2);
             
             assert.strictEqual(player.isValidPlay([card], [card2]), true);
 
             var card2 = new Card(RankType.FIVE, SuitType.SPADES);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card2);
             assert.strictEqual(player.isValidPlay([card], [card2]), true);
 
             var card2 = new Card(RankType.THREE, SuitType.HEARTS);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card2);
             assert.strictEqual(player.isValidPlay([card], [card2]), true);
 
             var card2 = new Card(RankType.FIVE, SuitType.DIAMONDS);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card2);
             assert.strictEqual(player.isValidPlay([card], [card2]), true); 
         })
         it('multiple cards left, first to play', function() {
             var card = new Card(RankType.ACE, SuitType.SPADES);
             var card2 = new Card(RankType.JACK, SuitType.HEARTS);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card);
             player.drawCard(card2);
 
@@ -125,7 +125,7 @@ describe('Player', function() {
             // no card of suit
             var card2 = new Card(RankType.FIVE, SuitType.HEARTS);
             var card3 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card2);
             player.drawCard(card3);
 
@@ -134,7 +134,7 @@ describe('Player', function() {
             // card of suit but not played
             var card2 = new Card(RankType.FIVE, SuitType.HEARTS);
             var card3 = new Card(RankType.SEVEN, SuitType.SPADES);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card2);
             player.drawCard(card3);
             assert.strictEqual(player.isValidPlay([card], [card2]), false);
@@ -142,7 +142,7 @@ describe('Player', function() {
             // card of suit and played
             var card2 = new Card(RankType.FIVE, SuitType.HEARTS);
             var card3 = new Card(RankType.SEVEN, SuitType.SPADES);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card2);
             player.drawCard(card3);
 
@@ -161,7 +161,7 @@ describe('Player', function() {
             var card7 = new Card(RankType.EIGHT, SuitType.DIAMONDS);
 
             // not enough of the same suit
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card1);
             player.drawCard(card2);
             player.drawCard(card6);
@@ -211,7 +211,7 @@ describe('Player', function() {
             var card7 = new Card(RankType.EIGHT, SuitType.DIAMONDS);
 
             // not enough of the same suit, but doesn't play all of them
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card1);
             player.drawCard(card2);
             player.drawCard(card6);
@@ -275,7 +275,7 @@ describe('Player', function() {
             card12.isTrump = true;
 
             // not enough of trump suit
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card1);
             player.drawCard(card2);
             player.drawCard(card6);
@@ -360,7 +360,7 @@ describe('Player', function() {
             card12.isTrump = true;
 
             // not enough of trump suit, but doesn't play all of them
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card1);
             player.drawCard(card2);
             player.drawCard(card6);
@@ -394,7 +394,7 @@ describe('Player', function() {
     describe('isTrump', function() {
         it('suit is trump suit', function() {
             var card = new Card(RankType.ACE, SuitType.SPADES);
-            var player = new Player(1);
+            var player = new Player(1, 'user1');
 
             assert.strictEqual(player.isTrump(card, SuitType.HEARTS, RankType.TWO), false);
             assert.strictEqual(player.isTrump(card, SuitType.SPADES, RankType.TWO), true);
@@ -407,7 +407,7 @@ describe('Player', function() {
         it('has no trump', function() {
             var card = new Card(RankType.FIVE, SuitType.HEARTS);
             var card2 = new Card(RankType.SEVEN, SuitType.SPADES);
-            var player = new Player(1);
+            var player = new Player(1, 'user1');
             player.drawCard(card);
             player.drawCard(card2);
 
@@ -417,7 +417,7 @@ describe('Player', function() {
             var card = new Card(RankType.FIVE, SuitType.HEARTS);
             var card2 = new Card(RankType.SEVEN, SuitType.SPADES);
             card2.isTrump = true;
-            var player = new Player(1);
+            var player = new Player(1, 'user1');
             player.drawCard(card);
             player.drawCard(card2);
 
@@ -429,7 +429,7 @@ describe('Player', function() {
         it('sets trump suit correctly', function() {
             var card = new Card(RankType.FIVE, SuitType.HEARTS);
             var card2 = new Card(RankType.SEVEN, SuitType.SPADES);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card);
             player.drawCard(card2);
             assert.strictEqual(player.setTrumpCards(SuitType.SPADES, RankType.TWO), 1);
@@ -441,7 +441,7 @@ describe('Player', function() {
         it('sets trump number correctly', function() {
             var card = new Card(RankType.FIVE, SuitType.HEARTS);
             var card2 = new Card(RankType.SEVEN, SuitType.SPADES);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.drawCard(card);
             player.drawCard(card2);
             assert.strictEqual(player.setTrumpCards(SuitType.CLUBS, RankType.FIVE), 1);
@@ -455,7 +455,7 @@ describe('Player', function() {
             var card2 = new Card(RankType.JACK, SuitType.HEARTS);
             var card3 = new Card(RankType.TWO, SuitType.DIAMONDS);
             
-            var player = new Player(1);
+            var player = new Player(1, 'user1');
             
             player.drawCard(card);
             assert.deepEqual(player.cards['spades'], [card]);
@@ -468,28 +468,28 @@ describe('Player', function() {
 
     describe ('hasCard', function() {
         it('correctly determines when has card and card is not a joker', function() {
-            var player = new Player(1);
+            var player = new Player(1, 'user1');
             var card = new Card(RankType.TEN, SuitType.SPADES);
             player.drawCard(card);
             assert.strictEqual(player.hasCard(new Card(RankType.TEN, SuitType.SPADES)), true);
         })
 
         it('correctly determines when does not have card and card is not a joker', function() {
-            var player = new Player(1);
+            var player = new Player(1, 'user1');
             var card = new Card(RankType.THREE, SuitType.SPADES);
             player.drawCard(card);
             assert.strictEqual(player.hasCard(new Card(RankType.THREE, SuitType.HEARTS)), false);
         })
 
         it('correctly determines when does not have card and card is a joker', function() {
-            var player = new Player(1);
+            var player = new Player(1, 'user1');
             assert.strictEqual(player.hasCard(new Card(RankType.BIG, SuitType.JOKERS)), false);
         })
     })
 
     describe('setVault', function() {
         it('correctly sets vault', function() {
-            var player = new Player(1);
+            var player = new Player(1, 'user1');
             player.banker = true;
             player.drawCard(new Card(RankType.TEN, SuitType.SPADES));
             player.drawCard(new Card(RankType.FIVE, SuitType.SPADES));
@@ -529,7 +529,7 @@ describe('Player', function() {
     describe('addToVault', function() {
         it('correctly adds to vault', function() {
             var card = new Card(RankType.THREE, SuitType.DIAMONDS);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.banker = true;
             player.drawCard(card);
             player.addToVault(card);
@@ -540,7 +540,7 @@ describe('Player', function() {
     describe('removeFromVault', function() {
         it('correctly removes from vault when only one card', function() {
             var card = new Card(RankType.THREE, SuitType.DIAMONDS);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.banker = true;
             player.drawCard(card);
             player.addToVault(card);
@@ -551,7 +551,7 @@ describe('Player', function() {
         it ('removes correct card from vault', function() {
             var card1 = new Card(RankType.THREE, SuitType.DIAMONDS);
             var card2 = new Card(RankType.THREE, SuitType.SPADES);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.banker = true;
             player.drawCard(card1);
             player.drawCard(card2);
@@ -564,7 +564,7 @@ describe('Player', function() {
 
         it('correctly removes from vault with duplicate card', function() {
             var card = new Card(RankType.THREE, SuitType.DIAMONDS);
-            player = new Player(1);
+            player = new Player(1, 'user1');
             player.banker = true;
             player.drawCard(card);
             player.drawCard(card);
@@ -573,6 +573,118 @@ describe('Player', function() {
             assert.deepEqual(player.vault, [card, card]);
             player.removeFromVault(card);
             assert.deepEqual(player.vault, [card]);
+        })
+    })
+    
+    describe('isValidStartingPlay', function() {
+        it('single card starting play', function() {
+            var card = new Card(RankType.THREE, SuitType.DIAMONDS);
+            player = new Player(1, 'user1');
+            
+            assert.strictEqual(player.isValidStartingPlay([card]), true);  
+        })
+        it('pair starting play', function() {
+            var card = new Card(RankType.THREE, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.THREE, SuitType.DIAMONDS);
+            player = new Player(1, 'user1');
+            
+            assert.strictEqual(player.isValidStartingPlay([card, card2]), true);
+        })
+        it('invalid pair starting play', function() {
+            var card = new Card(RankType.THREE, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.FOUR, SuitType.DIAMONDS);
+            player = new Player(1, 'user1');
+
+            assert.strictEqual(player.isValidStartingPlay([card, card2]), false);
+        })
+        it('tractor starting play', function() {
+            var card = new Card(RankType.THREE, SuitType.DIAMONDS);
+            var card3 = new Card(RankType.FOUR, SuitType.DIAMONDS);
+            player = new Player(1, 'user1');
+
+            assert.strictEqual(player.isValidStartingPlay([card, card, card3, card3], SuitType.HEARTS, RankType.SIX), true);
+
+            var card = new Card(RankType.FIVE, SuitType.HEARTS);
+            var card3 = new Card(RankType.SEVEN, SuitType.HEARTS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card);
+            player.drawCard(card3);
+            player.drawCard(card3);
+            player.setTrumpCards(SuitType.HEARTS, RankType.SIX);
+
+            assert.strictEqual(player.isValidStartingPlay([card, card, card3, card3], SuitType.HEARTS, RankType.SIX), true);
+
+            var card = new Card(RankType.SIX, SuitType.HEARTS);
+            var card3 = new Card(RankType.SMALL, SuitType.JOKERS);
+            var card5 = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card7 = new Card(RankType.ACE, SuitType.HEARTS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card);
+            player.drawCard(card3);
+            player.drawCard(card3);
+            player.drawCard(card5);
+            player.drawCard(card5);
+            player.drawCard(card7);
+            player.drawCard(card7);
+            player.setTrumpCards(SuitType.HEARTS, RankType.SIX);
+
+            assert.strictEqual(player.isValidStartingPlay([card7, card7, card5, card5, card, card, card3, card3], SuitType.HEARTS, RankType.SIX), true);
+        })
+        it('invalid tractor starting play', function() {
+            var card = new Card(RankType.FIVE, SuitType.HEARTS);
+            var card2 = new Card(RankType.FIVE, SuitType.HEARTS);
+            var card3 = new Card(RankType.EIGHT, SuitType.HEARTS);
+            var card4 = new Card(RankType.EIGHT, SuitType.HEARTS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+            player.drawCard(card3);
+            player.drawCard(card4);
+            player.setTrumpCards(SuitType.HEARTS, RankType.SIX);
+
+            assert.strictEqual(player.isValidStartingPlay([card, card2, card3, card4], SuitType.HEARTS, RankType.SIX), false);
+
+            var card = new Card(RankType.FIVE, SuitType.HEARTS);
+            var card2 = new Card(RankType.FIVE, SuitType.HEARTS);
+            var card3 = new Card(RankType.SIX, SuitType.HEARTS);
+            var card4 = new Card(RankType.SIX, SuitType.HEARTS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+            player.drawCard(card3);
+            player.drawCard(card4);
+            player.setTrumpCards(SuitType.HEARTS, RankType.SIX);
+
+            assert.strictEqual(player.isValidStartingPlay([card, card2, card3, card4], SuitType.HEARTS, RankType.SIX), false);
+
+            var card = new Card(RankType.ACE, SuitType.HEARTS);
+            var card2 = new Card(RankType.ACE, SuitType.HEARTS);
+            var card3 = new Card(RankType.SIX, SuitType.HEARTS);
+            var card4 = new Card(RankType.SIX, SuitType.HEARTS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+            player.drawCard(card3);
+            player.drawCard(card4);
+            player.setTrumpCards(SuitType.HEARTS, RankType.SIX);
+
+            assert.strictEqual(player.isValidStartingPlay([card, card2, card3, card4], SuitType.HEARTS, RankType.SIX), false);
+
+            var card = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card3 = new Card(RankType.SMALL, SuitType.JOKERS);
+            var card4 = new Card(RankType.SMALL, SuitType.JOKERS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+            player.drawCard(card3);
+            player.drawCard(card4);
+            player.setTrumpCards(SuitType.HEARTS, RankType.SIX);
+
+            assert.strictEqual(player.isValidStartingPlay([card, card2, card3, card4], SuitType.HEARTS, RankType.SIX), false);
+
         })
     })
 })

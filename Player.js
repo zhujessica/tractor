@@ -106,8 +106,9 @@ class Player {
                     return true;
                 } else if (!this.hasTrump()) {
                     return true;
+                } else {
+                    return false;
                 }
-                                                                return false;
             } else if (startingSuit == currentPlay.suit) {
                 // suit matches
                 return true;
@@ -151,6 +152,12 @@ class Player {
                     
                 }
                 // check if player has any tractors in hand and play them if necessary
+                console.log('xd');
+                console.log(playerCardsInSuit.map(x => String(x.rank) + String(x.suit)));
+                console.log(String(hasTractorOfLength(playerCardsInSuit, numPairs, this.trumpRank)));
+                console.log(String(hasTractorOfLength(play, numPairs, this.trumpRank)));
+                console.log("WTF");
+                
                 if (hasTractorOfLength(playerCardsInSuit, numPairs, this.trumpRank) 
                     && !hasTractorOfLength(play, numPairs, this.trumpRank)) {
                     return false;
@@ -165,17 +172,32 @@ class Player {
      * @param {Array<Card>} play 
      * @return {boolean} True if play is valid, false otherwise
      */
-    isValidStartingPlay(play) {
+    isValidStartingPlay(play, trumpSuit, trumpRank) {
         if (play.length == 1) {
             return true;
+        } else if (play.length == 2) {
+            return play[0].suit == play[1].suit && play[0].rank == play[1].rank;
         } else if (play.length % 2 == 0) {
-            for (var i = 0; i < play.length; i+=2) {
-                // check if they are pairs
-                if (play[i] != play[i+1]) {
-                    return false;
+            var tractorSuit = play[0].suit;
+            var trumpTractor = this.isTrump(play[0], trumpSuit, trumpRank);
+            
+            // Ensure that all cards are the same suit or are trump
+            for (var i = 0; i < play.length; i++) {
+                if (trumpTractor) {
+                    if (!this.isTrump(play[i], trumpSuit, trumpRank)) {
+                        return false;
+                    }
+                } else {
+                    if (play[i].suit != tractorSuit) {
+                        return false;
+                    }
                 }
             }
-            return true;
+            if (hasTractorOfLength(play, play.length/2, trumpRank) == false) {
+                return false;
+            } else {
+                return true;
+            }
         }
         return false;
     }
@@ -299,6 +321,12 @@ class Player {
                 if (this.isTrump(this.cards[suit][i], trumpSuit, trumpRank)) {
                     num_trump += 1;
                     this.cards[suit][i].isTrump = true;
+                    if (this.cards[suit][i].rank == trumpRank) {
+                        this.cards[suit][i].isTrumpRank = true;
+                    }
+                    if (this.cards[suit][i].suit == trumpSuit) {
+                        this.cards[suit][i].isTrumpSuit = true;
+                    }
                 }
             }
         }
