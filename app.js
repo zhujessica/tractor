@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var hbs = require('express-handlebars');
 var bodyParser = require('body-parser');
+var Player = require('./Player.js');
 
 // Initialize App
 var app = express();
@@ -32,12 +33,12 @@ var currentLobbyClients = {};
 var currentLobbyCount = 0;
 
 
-class Player {
-  constructor(username, socketId) {
-    this.username = username;
-    this.socketId = socketId;
-  }
-}
+// class Player {
+//   constructor(username, socketId) {
+//     this.username = username;
+//     this.socketId = socketId;
+//   }
+// }
 
 // contains about:
 // owner - username of the owner
@@ -76,7 +77,7 @@ io.on('connection', function(socket){
     // to the user
     socket.on('enter lobby', function(username) {
       if (Object.values(currentLobbyClients).includes(username)) {
-        console.log(username + " (a second one) has entered the lobby");
+        console.log(username + " (another one) has entered the lobby");
       } else {
         console.log(username + " has entered the lobby");
       }
@@ -141,13 +142,19 @@ io.on('connection', function(socket){
       // Checks if there is enough space for a player to join
       if (currentPlayers.length >= 4) {
         io.sockets.connected[socket.id].emit('full room', gameid);
-      } 
+      }
 
       // If enough space, add the new player and tell socket to enter room
       else {
         var newPlayer = new Player(username, socket.id);
         currentPlayers.push(newPlayer)
         io.sockets.connected[socket.id].emit('enter game room', gameid);
+
+        // If a room is full, tell the owner to start the game
+        if (currentPlayers.length == 4) {
+          // Add start button logic here
+          io.sockets.connected[currentPlayers[3].id].emit('start room', gameid, currentPlayers);
+        }
       }
     });
 
