@@ -7,10 +7,10 @@ var assert = require('assert');
 describe('Round', function() {
     describe('init', function() {
         it('correctly intializes round', function() {
-            var p1 = new Player(1, true, 2);
-            var p2 = new Player(2, false, 2);
-            var p3 = new Player(3, false, 2);
-            var p4 = new Player(4, false, 2);
+            var p1 = new Player(1, 'user1');
+            var p2 = new Player(2, 'user2');
+            var p3 = new Player(3, 'user3');
+            var p4 = new Player(4, 'user4');
             var players = [p1, p2, p3, p4];
             var round = new Round(players, {p1: [], p2: [], p3: [], p4: []});
             assert.deepEqual(round.players, players);
@@ -74,10 +74,10 @@ describe('Round', function() {
 
     describe('determineRoundHighest', function() {
         it('correctly determines round highest, single', function() {
-            var p1 = new Player(1);
-            var p2 = new Player(2);
-            var p3 = new Player(3);
-            var p4 = new Player(4);
+            var p1 = new Player(1, 'user1');
+            var p2 = new Player(2, 'user2');
+            var p3 = new Player(3, 'user3');
+            var p4 = new Player(4, 'user4');
             var players = [p1, p2, p3, p4];
             var card1 = new Card(RankType.KING, SuitType.SPADES);
             var card2 = new Card(RankType.ACE, SuitType.DIAMONDS);
@@ -114,10 +114,10 @@ describe('Round', function() {
             assert.strictEqual(round.determineRoundHighest(), p4);
         })
         it('correctly determines round highest, double', function() {
-            var p1 = new Player(1);
-            var p2 = new Player(2);
-            var p3 = new Player(3);
-            var p4 = new Player(4);
+            var p1 = new Player(1, 'user1');
+            var p2 = new Player(2, 'user2');
+            var p3 = new Player(3, 'user3');
+            var p4 = new Player(4, 'user4');
             var players = [p1, p2, p3, p4];
             var card1 = new Card(RankType.KING, SuitType.SPADES);
             var card2 = new Card(RankType.ACE, SuitType.DIAMONDS);

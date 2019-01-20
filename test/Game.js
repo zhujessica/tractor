@@ -7,10 +7,10 @@ var assert = require('chai').assert;
 
 describe('Game', function() {
     describe('isNextHighestValue', function() {
-        var player1 = new Player(1);
-        var player2 = new Player(2);
-        var player3 = new Player(3);
-        var player4 = new Player(4);
+        var player1 = new Player(1, 'user1');
+        var player2 = new Player(2, 'user2');
+        var player3 = new Player(3, 'user3');
+        var player4 = new Player(4, 'user4');
         var game = new Game([player1, player2, player3, player4]);
 
         it('one trump one non trump', function() {  
@@ -132,19 +132,19 @@ describe('Game', function() {
 
     describe('updatePoints', function() {
         it('correctly starts with 0 points', function() {
-            var player1 = new Player(1);
-            var player2 = new Player(2);
-            var player3 = new Player(3);
-            var player4 = new Player(4);
+            var player1 = new Player(1, 'user1');
+            var player2 = new Player(2, 'user2');
+            var player3 = new Player(3, 'user3');
+            var player4 = new Player(4, 'user4');
             var game = new Game([player1, player2, player3, player4]);
             assert.strictEqual(game.points, 0);
         })
 
         it('correctly updates points', function() {
-            var player1 = new Player(1);
-            var player2 = new Player(2);
-            var player3 = new Player(3);
-            var player4 = new Player(4);
+            var player1 = new Player(1, 'user1');
+            var player2 = new Player(2, 'user2');
+            var player3 = new Player(3, 'user3');
+            var player4 = new Player(4, 'user4');
             var game = new Game([player1, player2, player3, player4]);
             assert.strictEqual(game.points, 0);
             game.updatePoints(10);
@@ -156,10 +156,10 @@ describe('Game', function() {
 
     describe('getTotalPoints', function() {
         it('correctly works when banking team wins', function() {
-            var player1 = new Player(1);
-            var player2 = new Player(2);
-            var player3 = new Player(3);
-            var player4 = new Player(4);
+            var player1 = new Player(1, 'user1');
+            var player2 = new Player(2, 'user2');
+            var player3 = new Player(3, 'user3');
+            var player4 = new Player(4, 'user4');
             var game = new Game([player1, player2, player3, player4]);
             game.banker = player1;
             player1.banker = true;
@@ -170,10 +170,10 @@ describe('Game', function() {
         })
 
         it('correctly works when nonbanking team wins', function() {
-            var player1 = new Player(1);
-            var player2 = new Player(2);
-            var player3 = new Player(3);
-            var player4 = new Player(4);
+            var player1 = new Player(1, 'user1');
+            var player2 = new Player(2, 'user2');
+            var player3 = new Player(3, 'user3');
+            var player4 = new Player(4, 'user4');
             var game = new Game([player1, player2, player3, player4]);
             game.banker = player1;
             player1.banker = true;
