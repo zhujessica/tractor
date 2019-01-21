@@ -684,7 +684,6 @@ describe('Player', function() {
             player.setTrumpCards(SuitType.HEARTS, RankType.SIX);
 
             assert.strictEqual(player.isValidStartingPlay([card, card2, card3, card4], SuitType.HEARTS, RankType.SIX), false);
-
         })
     })
 })

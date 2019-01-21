@@ -197,45 +197,6 @@ class Player {
     }
 
     /**
-     * if not trump suit, if card2 is next
-     * if trump suit, if card2 is next
-     * @param {Card} card1
-     * @param {Card} card2 
-     * @return {boolean} True if card2 is the next highest value card after card1, false otherwise
-     */
-    isNextHighestValue(card1, card2) {
-        if (!card1.isTrump) {
-            if (card2.suit != card1.suit) {
-                return false;
-            } else if (card1.rank == RankType.ACE && card2.rank == RankType.TWO) {
-                return true;
-            } else if (card1.rank + 1 == card2.rank) {
-                return true;
-            }
-        } else {
-
-        }
-    }
-
-    /**
-     * @param {Array<Card>} cards to look for doubles in
-     * @return {boolean} True if cards has doubles, false otherwise
-     */
-    hasDoubles(cards) {
-        const card_set = new Set(cards);
-        return card_set.length != cards.length;
-    }
-
-    /**
-     * @param {Array<Card>} cards
-     * @returns {number} Number of pairs found in cards. 0 if none. 
-     */
-    findNumPairs(cards) {
-        const card_set = new Set(cards);
-        return card_set.length - card_set.length;
-    }
-
-    /**
      * @param {Card} card The card to check for in the player's hand.
      * @return {boolean} true if the player has the card, false otherwise.
      */

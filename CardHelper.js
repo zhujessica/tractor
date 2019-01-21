@@ -125,6 +125,7 @@ function isNextHighestValue(card1, card2, trumpRank) {
                 return true;
             }
         }
+        return false;
     }
 }
 
@@ -193,6 +194,7 @@ module.exports = {
     compareTwoHands,
     compareRanks,
     hasDoubles,
+    getDoubles,
     findNumPairs,
     isNextHighestValue,
     hasTractorOfLength
