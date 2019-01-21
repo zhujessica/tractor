@@ -5,6 +5,121 @@ const { RankType, SuitType } = require('../CardEnum.js');
 var assert = require('chai').assert;
 
 describe('CardHelper', function() {
+    describe('findNumPairs', function() {
+        it('no pairs', function() {
+            var card = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card3 = new Card(RankType.SEVEN, SuitType.HEARTS);
+            var card4 = new Card(RankType.SEVEN, SuitType.SPADES);
+            var card5 = new Card(RankType.EIGHT, SuitType.DIAMONDS);
+            
+            cards = [card, card2, card3, card4, card5];
+
+            assert.strictEqual(findNumPairs(cards), 0); 
+        })
+        it('some pairs', function() {
+            var card = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card4 = new Card(RankType.SEVEN, SuitType.SPADES);
+            var card5 = new Card(RankType.EIGHT, SuitType.HEARTS);
+            var card7 = new Card(RankType.BIG, SuitType.JOKERS);
+            
+            cards = [card, card2, card2, card4, card5];
+
+            assert.strictEqual(findNumPairs(cards), 1);
+ 
+            cards = [card, card2, card2, card4, card5, card5, card7, card7];
+
+            assert.strictEqual(findNumPairs(cards), 3); 
+        }) 
+    })
+    describe('hasDoubles', function() {
+        it('no doubles', function() {
+            var card = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card3 = new Card(RankType.SEVEN, SuitType.HEARTS);
+            var card4 = new Card(RankType.SEVEN, SuitType.SPADES);
+            var card5 = new Card(RankType.EIGHT, SuitType.DIAMONDS);
+            
+            cards = [card, card2, card3, card4, card5];
+
+            assert.strictEqual(hasDoubles(cards), false); 
+        })
+        it('some doubles', function() {
+            var card = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card4 = new Card(RankType.SEVEN, SuitType.SPADES);
+            var card5 = new Card(RankType.EIGHT, SuitType.HEARTS);
+            var card7 = new Card(RankType.BIG, SuitType.JOKERS);
+            
+            cards = [card, card2, card2, card4, card5];
+
+            assert.strictEqual(hasDoubles(cards), true);
+ 
+            cards = [card, card2, card2, card4, card5, card5, card7, card7];
+
+            assert.strictEqual(hasDoubles(cards), true); 
+        }) 
+    })
+    describe('checkIfAllDoubles', function() {
+        it('not all doubles', function() {
+            var card = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card3 = new Card(RankType.SEVEN, SuitType.HEARTS);
+            var card4 = new Card(RankType.SEVEN, SuitType.SPADES);
+            var card5 = new Card(RankType.EIGHT, SuitType.DIAMONDS);
+            
+            cards = [card, card2, card3, card4, card5];
+
+            assert.strictEqual(checkIfAllDoubles(cards), false);
+
+            cards = [card, card, card3, card4, card4];
+
+            assert.strictEqual(checkIfAllDoubles(cards), false); 
+
+        })
+        it('all doubles', function() {
+            var card = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card4 = new Card(RankType.SEVEN, SuitType.SPADES);
+            var card5 = new Card(RankType.EIGHT, SuitType.HEARTS);
+            var card7 = new Card(RankType.BIG, SuitType.JOKERS);
+
+            cards = [card, card, card2, card2, card4, card4, card5, card5, card7, card7];
+
+            assert.strictEqual(checkIfAllDoubles(cards), true); 
+        }) 
+    })
+    describe('getDoubles', function() {
+        it('no doubles', function() {
+            var card = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card3 = new Card(RankType.SEVEN, SuitType.HEARTS);
+            var card4 = new Card(RankType.SEVEN, SuitType.SPADES);
+            var card5 = new Card(RankType.EIGHT, SuitType.DIAMONDS);
+            
+            cards = [card, card2, card3, card4, card5];
+
+            assert.deepEqual(getDoubles(cards), []); 
+        })
+        it('some doubles', function() {
+            var card = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card4 = new Card(RankType.SEVEN, SuitType.SPADES);
+            var card5 = new Card(RankType.EIGHT, SuitType.HEARTS);
+            var card7 = new Card(RankType.BIG, SuitType.JOKERS);
+            
+            cards = [card, card2, card2, card4, card5];
+
+            assert.deepEqual(getDoubles(cards), [card2]);
+ 
+            cards = [card, card2, card2, card4, card5, card5, card7, card7];
+
+            assert.deepEqual(getDoubles(cards), [card2, card5, card7]); 
+        }) 
+    })
+
+
     describe('isNextHighestValue', function() {
         it('generic case', function() {
             var card = new Card(RankType.SIX, SuitType.DIAMONDS);
