@@ -4,6 +4,7 @@ var Game = require('../../Game.js');
 var socket = io();
 
 socket.emit('joined game room', {'gameid':gameid, 'username':username});
+// somehow need to make tractor and game object global ?
 
 // myNumber = 0;
 
@@ -14,6 +15,16 @@ function dealCardNotify() {
 
 function chooseTrumpNotify() {
   socket.emit('player chose trump', {'player': player, 'trumpSuit': trumpSuit});
+}
+
+function showDealCardButton(player) {
+  // logic here is prob wrong
+  $("body").append("<button type='button' id='dealCardButton'>Deal Card</button>");
+  $("Deal Card").click(dealCardNotify);
+}
+
+function putDownVaultCardsNotify() {
+  socket.emit('banker chose vault cards');
 }
 
 $(function () {
@@ -78,7 +89,7 @@ $(function () {
     // once tractor game is initialized, begin dealing of cards
     var deck = new Deck(2);
     deck.shuffle();
-    while (!deck.isEmpty()) {
+    while (deck.length != deck.VAULT_SIZE()) {
       for (var i = 0; i < currentPlayers.length; i++) {
         let player = currentPlayers[i];
         showDealCardButton(player); // function that allowed player to click button
@@ -87,7 +98,18 @@ $(function () {
         });
       }
     }
+    // after dealing is done, and trump is chosen, let the banker have the vault cards
+    for (let i = 0; i < deck.length; i++) {
+      game.dealCard(game.banker);
+    }
+    
+
   });
+
+  socket.on('banker chose vault cards', function() {
+    // if the banker put down 8 cards, start game
+    socket.emit('start round', game);
+  })
 
   socket.on('player chose trump', function(trumpInfo) {
     var trumpSuit = trumpInfo.suit;
