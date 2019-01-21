@@ -7,6 +7,15 @@ socket.emit('joined game room', {'gameid':gameid, 'username':username});
 
 // myNumber = 0;
 
+// called whenever a player clicks the deal card button (button not made yet)
+function dealCardNotify() {
+  socket.emit('deal card');
+}
+
+function chooseTrumpNotify() {
+  socket.emit('player chose trump', {'player': player, 'trumpSuit': trumpSuit});
+}
+
 $(function () {
   socket.on('I joined room', function(myNumber){
     // This displays the player who emitted the card + the card they clicked
@@ -55,7 +64,10 @@ $(function () {
   socket.on('closed room', function() {
     // SOME LOGIC THAT TAKES YOU BACK TO THE LOBBY
   });
-  socket.on('start room', function(gameId, currentPlayers) {
+
+  socket.on('start game', function(tempDetails) {
+    var gameId = tempDetails[gameId];
+    var currentPlayers = tempDetails[currentPlayers];
     console.log("Creating game " + gameId);
     var tractor = new Tractor(gameId);
     console.log("Adding in " + currentPlayers.length + " players to game");
@@ -63,19 +75,33 @@ $(function () {
       tractor.addPlayer(currentPlayers[i]);
     }
     var game = new Game(currentPlayers);
-    socket.emit('start first round dealing', tractor, game);
-  });
-
-  socket.on('start first round dealing', function(tractor, game){
+    // once tractor game is initialized, begin dealing of cards
     var deck = new Deck(2);
+    deck.shuffle();
+    while (!deck.isEmpty()) {
+      for (var i = 0; i < currentPlayers.length; i++) {
+        let player = currentPlayers[i];
+        showDealCardButton(player); // function that allowed player to click button
+        socket.on('deal card', function() {
+          game.dealCard(player);
+        });
+      }
+    }
   });
 
-  socket.on('start dealing', function(game){
+  socket.on('player chose trump', function(trumpInfo) {
+    var trumpSuit = trumpInfo.suit;
+    var player = trumpInfo.player; // only relevant for the first round
+    game.trumpSuit = trumpSuit;
+    if (firstRound) {
+      game.banker = player;
+    }
 
-  });
+  })
 
-  socket.on('start next round', function(gameState){
-
+  socket.on('start round', function(game) {
+    // game will be game object
+    // round implementation here
   });
 
 });

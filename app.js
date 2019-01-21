@@ -169,7 +169,8 @@ io.on('connection', function(socket){
           socket.emit('failed room id');
         } else {
           console.log("stage 5")
-          let gameDetails = {'owner': username, 'players': [], 'name': roomName};
+          var newPlayer = new Player(username, socket.id);
+          let gameDetails = {'owner': newPlayer, 'players': [newPlayer], 'name': roomName};
           
           // NOTE: kind of a useless variable
           currentIds[randomId] = roomName;
@@ -180,6 +181,7 @@ io.on('connection', function(socket){
 
           console.log("stage 6")
           // Forces the owner to join the room that they created
+          
           socket.emit('enter game room', randomId);
         }
       }
@@ -187,6 +189,7 @@ io.on('connection', function(socket){
 
     // Indicates that we are trying to enter a room with a specific url
     socket.on('join game room', function(clientInfo) {
+      console.log("joining game room");
       var username = clientInfo['username'];
       var gameid = clientInfo['gameid'];
       var gameDetails = currentGames[gameid];
@@ -203,11 +206,12 @@ io.on('connection', function(socket){
         currentPlayers.push(newPlayer)
         io.sockets.connected[socket.id].emit('enter game room', gameid);
 
-        // If a room is full, tell the owner to start the game
-        if (currentPlayers.length == 4) {
-          // Add start button logic here
-          io.sockets.connected[currentPlayers[3].id].emit('start room', gameid, currentPlayers);
-        }
+        // // If a room is full, tell the owner to start the game
+        // if (currentPlayers.length == 4) {
+        //   // Add start button logic here
+        //   var tempDetails = {"gameId": gameid, "players": currentPlayers} // change later
+        //   io.sockets.connected[socket.id].emit('start room', tempDetails);
+        // }
       }
     });
 
