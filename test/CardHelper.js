@@ -216,4 +216,74 @@ describe('CardHelper', function() {
             assert.strictEqual(isNextHighestValue(card3, card5, RankType.SEVEN), false);
         })
     })
+    describe('hasTractorOfLength', function() {
+        it('standard tractor', function() {
+            var card = new Card(RankType.THREE, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SIX, SuitType.HEARTS);
+            var card3 = new Card(RankType.FOUR, SuitType.DIAMONDS);
+            player = new Player(1, 'user1');
+
+            assert.strictEqual(hasTractorOfLength([card, card, card3, card3, card2], 1, RankType.TWO), true);
+            assert.strictEqual(hasTractorOfLength([card, card, card3, card3, card2], 2, RankType.TWO), true);
+            assert.strictEqual(hasTractorOfLength([card, card, card3, card3, card2], 3, RankType.TWO), false);
+        })
+        it('tractor skipping trump rank', function() {
+            var card = new Card(RankType.FIVE, SuitType.HEARTS);
+            var card3 = new Card(RankType.SEVEN, SuitType.HEARTS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card3);
+            player.setTrumpCards(SuitType.HEARTS, RankType.SIX);
+
+            assert.strictEqual(hasTractorOfLength([card, card, card3, card3], 1, RankType.SIX), true);
+            assert.strictEqual(hasTractorOfLength([card, card, card3, card3], 2, RankType.SIX), true);
+            assert.strictEqual(hasTractorOfLength([card, card, card3, card3], 3, RankType.SIX), false);
+        })
+        it('high trump tractor', function() {
+            var card = new Card(RankType.SIX, SuitType.HEARTS);
+            var card3 = new Card(RankType.SMALL, SuitType.JOKERS);
+            var card5 = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card7 = new Card(RankType.ACE, SuitType.HEARTS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card3);
+            player.drawCard(card5);
+            player.drawCard(card7);
+            player.setTrumpCards(SuitType.HEARTS, RankType.SIX);
+
+            assert.strictEqual(hasTractorOfLength([card7, card7, card5, card5, card, card, card3, card3], 1, RankType.SIX), true);
+            assert.strictEqual(hasTractorOfLength([card7, card7, card5, card5, card, card, card3, card3], 2, RankType.SIX), true);
+            assert.strictEqual(hasTractorOfLength([card7, card7, card5, card5, card, card, card3, card3], 3, RankType.SIX), true);
+            assert.strictEqual(hasTractorOfLength([card7, card7, card5, card5, card, card, card3, card3], 4, RankType.SIX), true);
+            assert.strictEqual(hasTractorOfLength([card7, card7, card5, card5, card, card, card3, card3], 5, RankType.SIX), false);
+        })
+    })
+    describe('compareRanks', function() {
+        it('no trump', function() {
+            var card = new Card(RankType.FIVE, SuitType.HEARTS);
+            var card2 = new Card(RankType.SEVEN, SuitType.HEARTS);
+            player = new Player(1, 'user1');
+            
+            assert.strictEqual(compareRanks(card, card2), -1);
+            assert.strictEqual(compareRanks(card2, card), 1);
+        })
+        it('first card is trump', function() {
+            var card = new Card(RankType.SIX, SuitType.HEARTS);
+            var card2 = new Card(RankType.SMALL, SuitType.JOKERS);
+            var card3 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card4 = new Card(RankType.ACE, SuitType.HEARTS);
+            var card5 = new Card(RankType.SIX, SuitType.DIAMONDS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+            player.drawCard(card3);
+            player.drawCard(card4);
+            player.drawCard(card5);
+            player.setTrumpCards(SuitType.HEARTS, RankType.SIX);
+            
+            assert.strictEqual(compareRanks(card3, card4), -1);
+            assert.strictEqual(compareRanks(card, card2), -1);
+            assert.strictEqual(compareRanks(card5, card), -1);
+        })
+    })
 })

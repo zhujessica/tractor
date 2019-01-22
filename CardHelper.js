@@ -180,11 +180,7 @@ function compareRanks(card1, card2) {
             if (!card1.isTrumpSuit && card2.isTrumpSuit) {
                 return -1;
             }
-        } else {
-            if (card1.suit != SuitType.JOKERS) {
-                return -1;
-            }
-        }
+        } 
         return 1;
     }
 }
