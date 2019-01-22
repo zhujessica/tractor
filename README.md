@@ -97,11 +97,11 @@ nvm install node
 ## Code Running Instructions
 
 1. Running Node Server
-node install  (install project dependencies)
+npm install  (install project dependencies)
 node app.js   (run node server)
 view at "localhost:port"; current port is 3000 so go to "localhost:3000"
 
 2. Running Test Cases
-node test     (runs all tests in 'test/' folder)
+npm test     (runs all tests in 'test/' folder)
 
 
