@@ -1,4 +1,4 @@
-var { checkIfAllDoubles, compareTwoHands, hasTractorOfLength } = require('./CardHelper.js');
+var { checkIfAllDoubles, compareTwoCards, hasTractorOfLength } = require('./CardHelper.js');
 var Card = require('./Card.js');
 var Player = require('./Player.js');
 
@@ -50,7 +50,7 @@ class Round {
             var player = this.players[i];
             var hand = this.playedCards[player.id];
             if (startingHand.length == 1) {
-                if (!compareTwoHands(highestHand[0], hand[0])) {
+                if (!compareTwoCards(highestHand[0], hand[0])) {
                     highestPlayer = player;
                     highestHand = this.playedCards[player.id];
                 }
@@ -58,7 +58,7 @@ class Round {
                 if (checkIfAllDoubles(hand)) {
                     // TODO: add in tractor checking
                     if (hasTractorOfLength(hand, startingHand.length/2)) {
-                        if (!compareTwoHands(highestHand[0], hand[0])) {
+                        if (!compareTwoCards(highestHand[0], hand[0])) {
                             highestPlayer = player;
                             highestHand = this.playedCards[player.id];
                         }
@@ -78,35 +78,6 @@ class Round {
         return cards.length - cardSet.size == cards.length/2;
     }
 
-    /**
-     * 
-     * @param {Card} card1 
-     * @param {Card} card2 
-     * @return {boolean} True if card2 is smaller or the same as card1, false otherwise
-     */
-    compareTwoHands(card1, card2) {
-        if (card1.isTrump && !card2.isTrump) {
-            return true;
-        } else if (card1.isTrump && card2.isTrump) {
-            if (!card1.isTrumpRank && !card2.isTrumpRank) {
-                return card1.rank >= card2.rank;
-            } else if (card1.isTrumpRank && !card2.isTrumpRank) {
-                return card2.suit != SuitType.JOKERS;
-            } else if (!card1.isTrumpRank && card2.isTrumpRank) {
-                return card1.suit == SuitType.JOKERS;
-            } else { // both trump ranks
-                return !card2.isTrumpSuit;
-            }
-        } else if (!card1.isTrump && card2.isTrump) {
-            return false;
-        } else if (!card1.isTrump && !card2.isTrump) {
-            if (card2.suit != card1.suit) {
-                return true;
-            } else {
-                return card1.rank >= card2.rank;
-            }
-        }
-    }
     /**
      * @param {Array<Card>} cards The cards for which to calculate points.
      * @return {number} Return the number of points in the cards.

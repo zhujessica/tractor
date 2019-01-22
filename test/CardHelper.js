@@ -1,4 +1,4 @@
-var { findNumPairs, hasDoubles, checkIfAllDoubles, getDoubles, compareTwoHands, isNextHighestValue, hasTractorOfLength, compareRanks } = require('../CardHelper.js');
+var { findNumPairs, hasDoubles, checkIfAllDoubles, getDoubles, compareTwoCards, isNextHighestValue, hasTractorOfLength, compareRanks } = require('../CardHelper.js');
 var Player = require('../Player.js');
 var Card = require('../Card.js');
 const { RankType, SuitType } = require('../CardEnum.js');
@@ -119,6 +119,54 @@ describe('CardHelper', function() {
         }) 
     })
 
+    describe('compareTwoCards', function() {
+        it('same suit', function() {
+            var card = new Card(RankType.FIVE, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            
+            assert.strictEqual(compareTwoCards(card, card2), false);
+            assert.strictEqual(compareTwoCards(card2, card), true);
+            assert.strictEqual(compareTwoCards(card, card), false);
+        })
+        it('both trump suit', function() {
+            var card = new Card(RankType.FIVE, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card3 = new Card(RankType.TWO, SuitType.HEARTS);
+            var card4 = new Card(RankType.TWO, SuitType.DIAMONDS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+            player.drawCard(card3);
+            player.drawCard(card4);
+            player.setTrumpCards(SuitType.DIAMONDS, RankType.TWO);
+            
+            assert.strictEqual(compareTwoCards(card, card2), false);
+            assert.strictEqual(compareTwoCards(card2, card), true);
+            assert.strictEqual(compareTwoCards(card, card), false);
+            assert.strictEqual(compareTwoCards(card, card3), false);
+            assert.strictEqual(compareTwoCards(card3, card2), true);
+            assert.strictEqual(compareTwoCards(card3, card4), false);
+
+        })
+        it('different suits non trump', function() {
+            var card = new Card(RankType.FIVE, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.HEARTS);
+            
+            assert.strictEqual(compareTwoCards(card, card2), true);
+            assert.strictEqual(compareTwoCards(card2, card), true);
+        })
+        it('trump and non trump', function() {
+            var card = new Card(RankType.FIVE, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.HEARTS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+            player.setTrumpCards(SuitType.DIAMONDS, RankType.TWO);
+            
+            assert.strictEqual(compareTwoCards(card, card2), true);
+            assert.strictEqual(compareTwoCards(card2, card), false);
+        })
+    })
 
     describe('isNextHighestValue', function() {
         it('generic case', function() {
