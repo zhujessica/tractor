@@ -37,8 +37,8 @@ var currentLobbyCount = 0;
 // players - username and socket id of the current players inside the room 
 // name - name of the game room
 
-var testPlayer1 = new Player('test', 1)
-var testPlayer2 = new Player('test', 2)
+var testPlayer1 = new Player(1, 'test')
+var testPlayer2 = new Player(2, 'test')
 
 // currentGames contains:
 // key - id of the game room
@@ -169,8 +169,8 @@ io.on('connection', function(socket){
           socket.emit('failed room id');
         } else {
           console.log("stage 5")
-          var newPlayer = new Player(username, socket.id);
-          let gameDetails = {'owner': newPlayer, 'players': [newPlayer], 'name': roomName};
+          var newPlayer = new Player(socket.id, username);
+          let gameDetails = {'owner': username, 'players': [], 'name': roomName};
           
           // NOTE: kind of a useless variable
           currentIds[randomId] = roomName;
@@ -187,7 +187,7 @@ io.on('connection', function(socket){
       }
     });
 
-    // Indicates that we are trying to enter a room with a specific url
+    // // Indicates that we are trying to enter a room with a specific url
     socket.on('join game room', function(clientInfo) {
       console.log("joining game room");
       var username = clientInfo['username'];
@@ -202,8 +202,8 @@ io.on('connection', function(socket){
 
       // If enough space, add the new player and tell socket to enter room
       else {
-        var newPlayer = new Player(username, socket.id);
-        currentPlayers.push(newPlayer)
+        // var newPlayer = new Player(socket.id, username);
+        // currentPlayers.push(newPlayer)
         io.sockets.connected[socket.id].emit('enter game room', gameid);
 
         // // If a room is full, tell the owner to start the game
@@ -231,7 +231,7 @@ io.on('connection', function(socket){
   // Case: Entering a specific game room
   else if (!isNaN(urlLastPath)) {
     console.log("entering room with id " + urlLastPath);
-    console.log(currentGames[urlLastPath]);
+    console.log(currentGames[Number(urlLastPath)]);
 
     var currentPlayer = null;
     var currentGameId = urlLastPath;
@@ -241,14 +241,15 @@ io.on('connection', function(socket){
       var gameid = userInfo['gameid'];
       var game = currentGames[gameid];
       var players = game['players'];
-      var owner = game['owner']
-      var newPlayer = new Player(username, socket.id);
-      players.push(newPlayer)
+      var owner = game['owner'];
+      var newPlayer = new Player(socket.id, username);
 
       // This is the case where the owner of the room first joins the room
       if (owner == username) {
         game['owner'] = newPlayer;
       }
+
+      players.push(newPlayer);
 
       currentPlayer = newPlayer;
 
@@ -257,7 +258,7 @@ io.on('connection', function(socket){
 
       // Tells every player inside the room to add the new player to their html
       for (var i = 0; i < players.length; i++) {
-        let socketId = players[i].socketId;
+        let socketId = players[i].id;
         if (socketId != socket.id) {
           console.log('yeah i just broadcast to ' + socketId);
           socket.broadcast.to(socketId).emit('add new player', username);
@@ -269,17 +270,47 @@ io.on('connection', function(socket){
       // If there are enough players, allow the owner to start the game
       if (players.length == 4) {
         console.log('broadcasted the start game');
-        socket.broadcast.to(currentGames[gameid]['owner'].socketId).emit('allow start');
+        socket.broadcast.to(currentGames[gameid]['owner'].id).emit('allow start');
       } else {
-        socket.broadcast.to(currentGames[gameid]['owner'].socketId).emit('cant start');
+        socket.broadcast.to(currentGames[gameid]['owner'].id).emit('cant start');
       }
 
     });
 
+    socket.on('start game', function(gameId) {
+      // create start logic for game here
+      var game = currentGames[gameId];
+      var currentPlayers = game['players'];
+      console.log("Creating game " + gameId);
+      var tractor = new Tractor(gameId);
+      console.log("Adding in " + currentPlayers.length + " players to game");
+      for (var i = 0; i < currentPlayers.length; i++) {
+        tractor.addPlayer(currentPlayers[i]);
+      }
+      var game = new Game(currentPlayers);
+      // once tractor game is initialized, begin dealing of cards
+      var deck = new Deck(2);
+      deck.shuffle();
+      while (deck.length != deck.VAULT_SIZE()) {
+        for (var i = 0; i < currentPlayers.length; i++) {
+          let player = currentPlayers[i];
+          socket.emit('deal card', player);
+          showDealCardButton(player); // function that allowed player to click button
+          socket.on('deal card', function() {
+            game.dealCard(player);
+          });
+        }
+      }
+      // after dealing is done, and trump is chosen, let the banker have the vault cards
+      for (let i = 0; i < deck.length; i++) {
+        game.dealCard(game.banker);
+      }
+    });
+
     // Player disconnects from the game room
     socket.on('disconnect', function() {
-      var ownerSocketId = currentGames[currentGameId]['owner'].socketId
-      var players = currentGames[currentGameId]['players'];
+      var ownerSocketId = currentGames[Number(currentGameId)]['owner'].id;
+      var players = currentGames[Number(currentGameId)]['players'];
 
       // Removes the player from currentGames
       const indexToRemove = players.indexOf(currentPlayer);
@@ -292,8 +323,8 @@ io.on('connection', function(socket){
           socket.broadcast.to(players[i].socketId).emit('closed room');  
         }
 
-        delete currentGames[currentGameId];
-        delete currentIds[currentGameId];
+        delete currentGames[Number(currentGameId)];
+        delete currentIds[Number(currentGameId)];
 
       } else {
         // Updates the html of each player inside the room
