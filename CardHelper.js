@@ -172,6 +172,10 @@ function compareRanks(card1, card2) {
             if (card1.rank < card2.rank) {
                 return -1;
             }
+        } else if (!card1.isTrumpRank && card2.isTrumpRank) {
+            if (card1.suit != SuitType.JOKERS) {
+                return -1;
+            }
         } else if (card1.isTrumpRank && !card2.isTrumpRank) {
             if (card2.suit == SuitType.JOKERS) {
                 return -1;
