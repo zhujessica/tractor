@@ -10,21 +10,21 @@ socket.emit('joined game room', {'gameid':gameid, 'username':username});
 
 // called whenever a player clicks the deal card button (button not made yet)
 function dealCardNotify() {
-  socket.emit('deal card', player);
+  console.log('deal card clicked');
+  socket.emit('deal card', gameid);
 }
 
 function chooseTrumpNotify() {
   socket.emit('player chose trump', {'player': player, 'trumpSuit': trumpSuit});
 }
 
-function showDealCardButton() {
-  // logic here is prob wrong
-  $("body").append("<button type='button' id='dealCardButton'>Deal Card</button>");
-  $("Deal Card").click(dealCardNotify);
-}
-
 function putDownVaultCardsNotify() {
   socket.emit('banker chose vault cards');
+}
+
+function startButtonNotify() {
+  console.log("start button clicked");
+  socket.emit('start game', gameid);
 }
 
 $(function () {
@@ -62,10 +62,12 @@ $(function () {
   socket.on('allow start', function() {
     console.log('received the signal to start');
     $("body").append("<button type='button' id='startButton'>Start Game</button>");
+    $("#startButton").click(startButtonNotify);
   });
 
   // Removes the start button if it's allowed
   socket.on('cant start', function() {
+    console.log('remove start button ??');
     var startButton = document.getElementById("startButton");
     if (startButton) {
       startButton.outerHTML = "";
@@ -76,11 +78,10 @@ $(function () {
     // SOME LOGIC THAT TAKES YOU BACK TO THE LOBBY
   });
     
-  socket.on('deal card', function(player) {
-    if (socket.id == player.id) {
-      showDealCardButton();
-
-    }
+  socket.on('deal card', function() {
+    console.log('dealing card');
+    $("body").append("<button type='button' id='dealCardButton'>Draw Card</button>");
+    $("#dealCardButton").click(dealCardNotify);
   })
 
   // socket.on('banker chose vault cards', function() {

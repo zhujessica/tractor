@@ -38,6 +38,8 @@ class Game {
         if (this.deck.isEmpty()) {
             throw new Error('no more cards to deal!');
         } else {
+            console.log(player);
+            console.log(this.deck.drawCard());
             player.drawCard(this.deck.drawCard());
         }
     }

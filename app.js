@@ -3,6 +3,10 @@ var path = require('path');
 var hbs = require('express-handlebars');
 var bodyParser = require('body-parser');
 var Player = require('./Player.js');
+var Tractor = require('./Tractor.js');
+var Deck = require('./Deck.js');
+var Game = require('./Game.js');
+var Card = require('./Card.js');
 
 // Initialize App
 var app = express();
@@ -268,7 +272,7 @@ io.on('connection', function(socket){
       console.log('there are ' + players.length + ' current players now');
 
       // If there are enough players, allow the owner to start the game
-      if (players.length == 4) {
+      if (players.length == 3) {
         console.log('broadcasted the start game');
         socket.broadcast.to(currentGames[gameid]['owner'].id).emit('allow start');
       } else {
@@ -279,6 +283,8 @@ io.on('connection', function(socket){
 
     socket.on('start game', function(gameId) {
       // create start logic for game here
+      console.log("creating start game logic");
+      socket.broadcast.to(currentGames[gameId]['owner'].id).emit('cant start');
       var game = currentGames[gameId];
       var currentPlayers = game['players'];
       console.log("Creating game " + gameId);
@@ -291,20 +297,29 @@ io.on('connection', function(socket){
       // once tractor game is initialized, begin dealing of cards
       var deck = new Deck(2);
       deck.shuffle();
-      while (deck.length != deck.VAULT_SIZE()) {
-        for (var i = 0; i < currentPlayers.length; i++) {
-          let player = currentPlayers[i];
-          socket.emit('deal card', player);
-          showDealCardButton(player); // function that allowed player to click button
-          socket.on('deal card', function() {
-            game.dealCard(player);
-          });
+      console.log("deck shuffled, begin dealing " + deck.deck.length + " cards");
+      var prevPersonDrew = true;
+      var playerIndex = 1;
+      while (deck.deck.length != deck.VAULT_SIZE) {
+        if (prevPersonDrew) {
+          prevPersonDrew = false;
+          var player = currentPlayers[playerIndex];
+          console.log('current player ' + player)
+          socket.broadcast.to(player.id).emit('deal card');
         }
       }
       // after dealing is done, and trump is chosen, let the banker have the vault cards
-      for (let i = 0; i < deck.length; i++) {
+      for (let i = 0; i < deck.deck.length; i++) {
         game.dealCard(game.banker);
       }
+    });
+
+    socket.on('deal card', function(gameid) {
+      console.log(player.username + ' drew a card');
+      game.dealCard(player);
+      playerIndex = (playerIndex+1)%currentPlayers.length;
+      prevPersonDrew = true;
+      console.log(deck.deck.length);
     });
 
     // Player disconnects from the game room
