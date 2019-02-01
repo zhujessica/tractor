@@ -6,6 +6,33 @@ var Game = require('../Game.js');
 var assert = require('chai').assert;
 
 describe('Game', function() {
+    describe('init', function() {
+        it('correctly initializes banker', function() {
+            var player1 = new Player(1, 'user1');
+            var player2 = new Player(2, 'user2');
+            var player3 = new Player(3, 'user3');
+            var player4 = new Player(4, 'user4');
+            
+            player1.level = RankType.THREE;
+            player1.banker = true; 
+            
+            var game = new Game([player1, player2, player3, player4]);
+
+            assert.deepEqual(game.banker, player1)
+            assert.strictEqual(game.trumpRank, RankType.THREE);
+        })
+        it('throws an error if more than 1 banker', function() {
+            var player1 = new Player(1, 'user1');
+            var player2 = new Player(2, 'user2');
+            var player3 = new Player(3, 'user3');
+            var player4 = new Player(4, 'user4');
+            
+            player1.banker = true;
+            player2.banker = true; 
+            
+            assert.throws(function () {new Game([player1, player2, player3, player4])}, Error);
+        })   
+    })
     describe('updatePoints', function() {
         it('correctly starts with 0 points', function() {
             var player1 = new Player(1, 'user1');
@@ -59,6 +86,7 @@ describe('Game', function() {
             assert.strictEqual(game.getTotalPoints(player4, 2), 45);
         })
     })
+
     describe('finalizeTrump', function() {
         it('works in general case', function() {
             var player1 = new Player(1, 'user1');
@@ -86,6 +114,7 @@ describe('Game', function() {
             assert.deepEqual([card4.isTrump, card4.isTrumpRank, card4.isTrumpSuit], [true, false, false]);
         })
     })
+
     describe('finalizeBanker', function() {
         it('works as expected', function() {
             var player1 = new Player(1, 'user1');
@@ -101,6 +130,36 @@ describe('Game', function() {
             for (var i = 0; i < game.players.length; i++) {
                 assert.strictEqual(game.players[i].trumpRank, RankType.THREE);
             } 
+        })
+    })
+    
+    describe('dealCard', function() {
+        it('works when non-empty deck', function() {
+            var player1 = new Player(1, 'user1');
+            var player2 = new Player(2, 'user2');
+            var player3 = new Player(3, 'user3');
+            var player4 = new Player(4, 'user4');
+
+            var game = new Game([player1, player2, player3, player4]);
+            game.dealCard(player1);
+            var numCards = 0;
+            for (var suit in SuitType) {
+                numCards += player1.cards[SuitType[suit]].length;
+            }
+            assert.strictEqual(numCards, 1);
+        })
+        it('throws an error when deck is empty', function() {
+            var player1 = new Player(1, 'user1');
+            var player2 = new Player(2, 'user2');
+            var player3 = new Player(3, 'user3');
+            var player4 = new Player(4, 'user4');
+
+            var game = new Game([player1, player2, player3, player4]);
+            for (var i = 0; !game.deck.isEmpty(); i++) {
+                game.deck.drawCard();
+            }
+            
+            assert.throws(function () { game.dealCard(player1) }, Error);
         })
     })
 })
