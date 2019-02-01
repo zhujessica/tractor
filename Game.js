@@ -47,6 +47,7 @@ class Game {
     /**
      * Players take turns drawing cards until the deck is empty
      */
+    /*
     drawCards() {
         var i = 0;
         while (!this.deck.isEmpty()) {
@@ -54,6 +55,7 @@ class Game {
             i = (i+1) % this.players.length;
         }
     }
+    */
 
     /**
      * Finalize the banker for the round. Sets the trump rank.
@@ -76,56 +78,6 @@ class Game {
         for (var i = 0; i < this.players.length; i++) {
             this.players[i].setTrumpCards(this.trumpSuit, this.trumpRank);
         }
-    }
-
-    /**
-     * To be used when determining tractors.
-     * @param {Card} card1
-     * @param {Card} card2 
-     * @return {boolean} True if card2 is the next highest value card after card1, false otherwise
-     */
-    isNextHighestValue(card1, card2) {
-        if (card1.isTrump != card2.isTrump) {
-            return false;
-        }
-        if (!card1.isTrump) {
-            if (card2.suit != card1.suit) {
-                return false;
-            } else if (card1.rank == RankType.ACE && card2.rank == RankType.TWO) {
-                return true;
-            } else if (card1.rank + 1 == card2.rank) {
-                return true;
-            } else if (card1.rank + 1 == this.trumpRank && card1.rank + 2 == card2.rank) {
-                return true;
-            }
-        } else {
-            if (card1.rank != this.trumpRank && card2.rank != this.trumpRank) {
-                if (card1.rank + 1 == card2.rank) {
-                    return true;
-                } else if (card1.rank + 1 == this.trumpRank && card1.rank + 2 == card2.rank) {
-                    return true;
-                }
-            } else if (card1.rank != this.trumpRank && card2.rank == this.trumpRank) {
-                if (this.trumpRank != RankType.ACE) {
-                    if (card1.rank == RankType.ACE && card2.suit != this.trumpSuit) {
-                        return true;
-                    }
-                } else {
-                    if (card1.rank == RankType.KING && card2.suit != this.trumpSuit) {
-                        return true;
-                    }
-                }
-            } else if (card1.rank == this.trumpRank && card2.rank == this.trumpRank) {
-                if (card1.suit != this.trumpSuit && card2.suit == this.trumpSuit) {
-                    return true;
-                }
-            } else if (card1.rank == this.trumpRank && card2.rank == RankType.SMALL) {
-                if (card1.suit == this.trumpSuit) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
