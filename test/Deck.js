@@ -54,4 +54,19 @@ describe('Deck', function() {
             assert.strictEqual(deck.isEmpty(), true);
         })
     })
+    
+    describe('getVault', function() {
+        it('throws error if deck not vault size', function() {
+            var deck = new Deck(2);
+            assert.throws(deck.getVault, Error); 
+        })
+        it('returns deck if correct size', function() {
+            var deck = new Deck(2);
+            var length = deck.deck.length - Deck.VAULT_SIZE;
+            for (var i = 0; i < length; i++) {
+                deck.drawCard();
+            }
+            assert.deepEqual(deck.getVault(), deck.deck);
+        })
+    })
 })
