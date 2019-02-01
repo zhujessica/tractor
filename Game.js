@@ -73,8 +73,8 @@ class Game {
      * to be trump accordingly.
      */
     finalizeTrump() {
-        for (var player in this.players) {
-            player.setTrumpCards(this.trumpSuit, this.trumpRank);
+        for (var i = 0; i < this.players.length; i++) {
+            this.players[i].setTrumpCards(this.trumpSuit, this.trumpRank);
         }
     }
 
