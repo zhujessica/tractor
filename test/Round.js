@@ -72,6 +72,57 @@ describe('Round', function() {
         })
     })
 
+    describe('calculateTotalPoints', function() {
+        it('correctly counts points, no cards', function() {
+            var p1 = new Player(1, 'user1');
+            var p2 = new Player(2, 'user2');
+            var p3 = new Player(3, 'user3');
+            var p4 = new Player(4, 'user4');
+            var players = [p1, p2, p3, p4];
+            var playedCards = {1: [], 2: [], 3: [], 4: []};
+            var round = new Round(players, playedCards);
+            
+            assert.strictEqual(round.calculateTotalPoints(), 0);
+        })
+        it('correctly counts points, one card each', function() {
+            var p1 = new Player(1, 'user1');
+            var p2 = new Player(2, 'user2');
+            var p3 = new Player(3, 'user3');
+            var p4 = new Player(4, 'user4');
+            var players = [p1, p2, p3, p4];
+            var card1 = new Card(RankType.KING, SuitType.SPADES);
+            var card2 = new Card(RankType.ACE, SuitType.DIAMONDS);
+            var card3 = new Card(RankType.TWO, SuitType.DIAMONDS);
+            var card4 = new Card(RankType.FIVE, SuitType.DIAMONDS);
+            var playedCards = {1: [card1], 2: [card2], 3: [card3], 4: [card4]};
+            var round = new Round(players, playedCards);
+            
+            assert.strictEqual(round.calculateTotalPoints(), 15);
+        })
+        it('correctly counts points, multiple cards each', function() {
+            var p1 = new Player(1, 'user1');
+            var p2 = new Player(2, 'user2');
+            var p3 = new Player(3, 'user3');
+            var p4 = new Player(4, 'user4');
+            var players = [p1, p2, p3, p4];
+            var card1 = new Card(RankType.KING, SuitType.SPADES);
+            var card2 = new Card(RankType.ACE, SuitType.DIAMONDS);
+            var card3 = new Card(RankType.TWO, SuitType.DIAMONDS);
+            var card4 = new Card(RankType.FIVE, SuitType.DIAMONDS);
+            var card5 = new Card(RankType.TEN, SuitType.HEARTS);
+            var card6 = new Card(RankType.BIG, SuitType.JOKERS);
+            var playedCards = {
+                1: [card1, card5, card5],
+                2: [card2, card6, card2],
+                3: [card3, card4, card6],
+                4: [card4, card1, card3]
+            };
+            var round = new Round(players, playedCards);
+            
+            assert.strictEqual(round.calculateTotalPoints(), 50);
+        })
+    })
+    
     describe('determineRoundHighest', function() {
         it('correctly determines round highest, single', function() {
             var p1 = new Player(1, 'user1');

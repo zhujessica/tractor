@@ -30,8 +30,8 @@ class Round {
      */
     calculateTotalPoints() {
         var points = 0;
-        for (var hand in this.playedCards) {
-            points += Round.calculatePoints(hand);
+        for (var player in this.playedCards) {
+            points += Round.calculatePoints(this.playedCards[player]);
         }
         return points;
     }
@@ -68,14 +68,6 @@ class Round {
             
         }
         return highestPlayer;
-    }
-
-    /**
-     * @return {boolean} Returns true if cards are all doubles.
-     */
-    checkIfAllDoubles(cards) {
-        var cardSet = new Set(cards);
-        return cards.length - cardSet.size == cards.length/2;
     }
 
     /**
