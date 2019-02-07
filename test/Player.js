@@ -615,6 +615,7 @@ describe('Player', function() {
             player = new Player(1, 'user1');
 
             assert.strictEqual(player.isValidStartingPlay([card, card2]), false);
+            assert.strictEqual(player.isValidStartingPlay([card, card2, card2]), false);
         })
         it('tractor starting play', function() {
             var card = new Card(RankType.THREE, SuitType.DIAMONDS);
@@ -727,6 +728,7 @@ describe('Player', function() {
             assert.deepEqual(player.cards[SuitType.JOKERS], []);
         })
         it('throws error when card doesn\'t exist', function() {
+            var card3 = new Card(RankType.EIGHT, SuitType.DIAMONDS);
             player = new Player(1, 'user1');
             assert.throws(function () {player.removeCard(card3);}, Error);
         }) 
@@ -752,5 +754,11 @@ describe('Player', function() {
             assert.deepEqual(player.cards[SuitType.DIAMONDS], []);
             assert.deepEqual(player.cards[SuitType.JOKERS], []);
         })
+        it('throws error when card doesn\'t exist', function() {
+            var card3 = new Card(RankType.EIGHT, SuitType.DIAMONDS);
+            var card4 = new Card(RankType.SMALL, SuitType.JOKERS);
+            player = new Player(1, 'user1');
+            assert.throws(function () {player.playCards([card3, card4]);}, Error);
+        }) 
     })
 })
