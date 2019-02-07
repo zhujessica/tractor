@@ -424,6 +424,40 @@ describe('Player', function() {
             assert.strictEqual(player.hasTrump(), true);
         })
     })
+    
+    describe('numTrump', function() {
+        it('has no trump', function() {
+            var card = new Card(RankType.FIVE, SuitType.HEARTS);
+            var card2 = new Card(RankType.SEVEN, SuitType.SPADES);
+            var player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+
+            assert.strictEqual(player.numTrump(), 0);
+        })
+        it('has one trump', function() {
+            var card = new Card(RankType.FIVE, SuitType.HEARTS);
+            var card2 = new Card(RankType.SEVEN, SuitType.SPADES);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+            player.setTrumpCards(SuitType.CLUBS, RankType.FIVE)
+
+            assert.strictEqual(player.numTrump(), 1);
+        })
+        it('has at least 2 trump', function() {
+            var card = new Card(RankType.FIVE, SuitType.HEARTS);
+            var card2 = new Card(RankType.SEVEN, SuitType.SPADES);
+            var card3 = new Card(RankType.EIGHT, SuitType.CLUBS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+            player.drawCard(card3);
+            player.setTrumpCards(SuitType.CLUBS, RankType.FIVE)
+
+            assert.strictEqual(player.numTrump(), 2);
+        })
+    })
         
     describe('setTrumpCards', function() {
         it('sets trump suit correctly', function() {
@@ -432,7 +466,7 @@ describe('Player', function() {
             player = new Player(1, 'user1');
             player.drawCard(card);
             player.drawCard(card2);
-            assert.strictEqual(player.setTrumpCards(SuitType.SPADES, RankType.TWO), 1);
+            player.setTrumpCards(SuitType.SPADES, RankType.TWO);
 
             assert.strictEqual(card.isTrump, false);
             assert.strictEqual(card2.isTrump, true);
@@ -444,25 +478,10 @@ describe('Player', function() {
             player = new Player(1, 'user1');
             player.drawCard(card);
             player.drawCard(card2);
-            assert.strictEqual(player.setTrumpCards(SuitType.CLUBS, RankType.FIVE), 1);
+            player.setTrumpCards(SuitType.CLUBS, RankType.FIVE);
 
             assert.strictEqual(card.isTrump, true);
             assert.strictEqual(card2.isTrump, false);
-        })
-
-        it('adds new card to hand', function() {    
-            var card = new Card(RankType.ACE, SuitType.SPADES);
-            var card2 = new Card(RankType.JACK, SuitType.HEARTS);
-            var card3 = new Card(RankType.TWO, SuitType.DIAMONDS);
-            
-            var player = new Player(1, 'user1');
-            
-            player.drawCard(card);
-            assert.deepEqual(player.cards['spades'], [card]);
-            player.drawCard(card2);
-            assert.deepEqual(player.cards['hearts'], [card2]);
-            player.drawCard(card3);
-            assert.deepEqual(player.cards['diamonds'], [card3]);
         })
     })
 
@@ -684,6 +703,54 @@ describe('Player', function() {
             player.setTrumpCards(SuitType.HEARTS, RankType.SIX);
 
             assert.strictEqual(player.isValidStartingPlay([card, card2, card3, card4], SuitType.HEARTS, RankType.SIX), false);
+        })
+    })
+    
+    describe('removeCard', function() {
+        it('removes a card', function() {
+            var card = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card3 = new Card(RankType.EIGHT, SuitType.DIAMONDS);
+            var card4 = new Card(RankType.SMALL, SuitType.JOKERS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+            player.drawCard(card3);
+            player.drawCard(card4);
+
+            player.removeCard(card3);
+            assert.deepEqual(player.cards[SuitType.DIAMONDS], [card, card2]);
+            assert.deepEqual(player.cards[SuitType.JOKERS], [card4]);
+
+            player.removeCard(card4);
+            assert.deepEqual(player.cards[SuitType.DIAMONDS], [card, card2]);
+            assert.deepEqual(player.cards[SuitType.JOKERS], []);
+        })
+        it('throws error when card doesn\'t exist', function() {
+            player = new Player(1, 'user1');
+            assert.throws(function () {player.removeCard(card3);}, Error);
+        }) 
+    })
+
+    describe('playCards', function() {
+        it('removes multiple cards', function() {
+            var card = new Card(RankType.SIX, SuitType.DIAMONDS);
+            var card2 = new Card(RankType.SEVEN, SuitType.DIAMONDS);
+            var card3 = new Card(RankType.EIGHT, SuitType.DIAMONDS);
+            var card4 = new Card(RankType.SMALL, SuitType.JOKERS);
+            player = new Player(1, 'user1');
+            player.drawCard(card);
+            player.drawCard(card2);
+            player.drawCard(card3);
+            player.drawCard(card4);
+
+            player.playCards([card, card2]);
+            assert.deepEqual(player.cards[SuitType.DIAMONDS], [card3]);
+            assert.deepEqual(player.cards[SuitType.JOKERS], [card4]);
+
+            player.playCards([card3, card4]);
+            assert.deepEqual(player.cards[SuitType.DIAMONDS], []);
+            assert.deepEqual(player.cards[SuitType.JOKERS], []);
         })
     })
 })

@@ -245,8 +245,15 @@ class Player {
      * @return {number} Return number of trump in player's hand.
      */
     numTrump() {
-        // TODO: implement this
-        return 0;
+        var numTrump = 0;
+        for (var suit of Object.values(SuitType)) {
+            for (var i = 0; i < this.cards[suit].length; i++) {
+                if (this.cards[suit][i].isTrump) {
+                    numTrump += 1;
+                }
+            }
+        }
+        return numTrump;
     }
 
     /**
@@ -270,11 +277,9 @@ class Player {
      * Set the players trump cards.
      */
     setTrumpCards(trumpSuit, trumpRank) {
-        var num_trump = 0;
         for (var suit of Object.values(SuitType)) {
             for (var i = 0; i < this.cards[suit].length; i++) {
                 if (this.isTrump(this.cards[suit][i], trumpSuit, trumpRank)) {
-                    num_trump += 1;
                     this.cards[suit][i].isTrump = true;
                     if (this.cards[suit][i].rank == trumpRank) {
                         this.cards[suit][i].isTrumpRank = true;
@@ -285,15 +290,41 @@ class Player {
                 }
             }
         }
-        return num_trump;
+    }
+
+    /**
+     * Removes a single card from the players current hand if the card exists.
+     * Otherwise, throws an error.
+     * @param{Card} the card to remove.
+     */
+    removeCard(card) {
+        var suit = this.cards[card.suit];
+        var indexToRemove = -1;
+        for (var index in suit) {
+            if (suit[index].equals(card)) {
+                indexToRemove = index;
+                break;
+            }
+        }
+        if (indexToRemove > -1) {
+            this.cards[card.suit].splice(index, 1);
+        } else {
+            throw new Error('player trying to remove card that doesn\'t exist');
+        }
     }
 
     /**
      * Plays a card or several cards. Removes them from players current hand.
-     * @param {*} card The card(s) to play
+     * @param {Array<Card>} the card(s) to play.
      */
-    playCard(cards) {
+    playCards(cards) {
         // remove cards from this.cards
+        for (var i = 0; i < cards.length; i++) {
+            if (!this.hasCard(cards[i])){
+                throw new Error('player trying to play card they don\'t have');
+            }
+            this.removeCard(cards[i]);   
+        }
     }
 };
 
