@@ -9,11 +9,22 @@ const { RankType, SuitType } = require('./CardEnum.js');
  * @returns {number} Number of pairs found in cards. 0 if none. 
  */
 function findNumPairs(cards) {
-    var card_set = new Set();
+    var seen = [];
+    var numPairs = 0;
     for (var i = 0; i < cards.length; i++) {
-        card_set.add(cards[i]);
+        pairFound = false;
+        for (var j = 0; j < seen.length; j++) {
+            if (cards[i].equals(seen[j])) {
+                numPairs += 1;
+                seen.splice(j, 1);
+                pairFound = true;
+            }
+        }
+        if (!pairFound) {
+            seen.push(cards[i])
+        }
     }
-    return cards.length - card_set.size;
+    return numPairs;
 }
 
 /**
@@ -39,10 +50,19 @@ function checkIfAllDoubles(cards) {
 function getDoubles(cards) {
     var doubles = [];
     var seen = [];
+
+    // look for doubles amongst previously seen cards
     for (var i = 0; i < cards.length; i++) {
-        if (seen.indexOf(cards[i]) != -1) {
-            doubles.push(cards[i]);
-        } else {
+        doubleFound = false;
+        for (var j = 0; j < seen.length; j++) {
+            if (cards[i].equals(seen[j])) {
+                doubles.push(cards[i]);
+                doubleFound = true;
+                seen.splice(j, 1);
+                break;
+            }
+        } 
+        if (!doubleFound) {
             seen.push(cards[i]);
         }
     }
