@@ -102,22 +102,18 @@ class Player {
             // one card
             if (playedCard.isTrump) {
                 // played card is trump
-                if (this.hasTrump() && currentPlay.isTrump) {
-                    return true;
-                } else if (!this.hasTrump()) {
-                    return true;
-                } else {
+                if (this.hasTrump() && !currentPlay.isTrump) {
                     return false;
                 }
+                return true;
             } else if (startingSuit == currentPlay.suit) {
                 // suit matches
                 return true;
             } else if (this.cards[startingSuit].length == 0) {
                 // out of suit
                 return true;
-            } else {
-                return false;
             }
+            return false;
         } else {
             // tractor of length (play.length / 2)
             const numPairs = startingPlay.length/2;
@@ -132,11 +128,9 @@ class Player {
             if (playerCardsInSuit.length <= startingPlay.length) {
                 // array of integer indices
                 var matchedPlayIndices = [];
-                
                 for (var i = 0; i < playerCardsInSuit.length; i++) {
                     var card = playerCardsInSuit[i];
                     var cardFoundInPlay = false;
-                    
                     for (var j = 0; j < play.length; j++) {
                         // matchedPlayIndices is an array of integers so using incluedes is fine
                         if (matchedPlayIndices.includes(j)) {
@@ -149,15 +143,12 @@ class Player {
                         }
                     }
                     if (!cardFoundInPlay) {
-                        return false
+                        return false;
                     }
                 }
             } else {
                 // check play is all of the corresponding suit + doubles if applicable
-                
-                // array of integer indices
                 var matchedPlayerCardIndices = [];
-                
                 for (var i = 0; i < play.length; i++) {
                     var card = play[i];
                     var playerHasCard = false;
@@ -180,7 +171,6 @@ class Player {
                     if (findNumPairs(play) != Math.min(numPairs, numPairsInSuit)) {
                         return false;
                     }
-                    
                 }
                 // check if player has any tractors in hand and play them if necessary
                 if (hasTractorOfLength(playerCardsInSuit, numPairs, this.trumpRank) 
@@ -218,11 +208,7 @@ class Player {
                     }
                 }
             }
-            if (hasTractorOfLength(play, play.length/2, trumpRank) == false) {
-                return false;
-            } else {
-                return true;
-            }
+            return hasTractorOfLength(play, play.length/2, trumpRank);
         }
         return false;
     }
@@ -248,14 +234,7 @@ class Player {
      * @return {boolean} True if the card is trump, false otherwise
      */
     isTrump(card, trumpSuit, trumpRank) {
-        if (card.suit == SuitType.JOKERS) {
-            return true;
-        } else if (card.suit == trumpSuit) {
-            return true;
-        } else if (card.rank == trumpRank) {
-            return true;
-        }
-        return false;
+        return card.suit == SuitType.JOKERS || card.suit == trumpSuit || card.rank == trumpRank;
     }
 
     /**
@@ -291,9 +270,8 @@ class Player {
      * @return {Array<Card>} array of trump cards in player's hand.
      */
     getTrump() {
-        // TODO: implement this
         var trumps = [];
-        for (let suit in SuitType) {
+        for (var suit in SuitType) {
             var cardsInSuit = this.cards[SuitType[suit]];
             for (var i = 0; i < cardsInSuit.length; i++) {
                 if (cardsInSuit[i].isTrump) {
@@ -310,13 +288,14 @@ class Player {
     setTrumpCards(trumpSuit, trumpRank) {
         for (var suit of Object.values(SuitType)) {
             for (var i = 0; i < this.cards[suit].length; i++) {
-                if (this.isTrump(this.cards[suit][i], trumpSuit, trumpRank)) {
-                    this.cards[suit][i].isTrump = true;
-                    if (this.cards[suit][i].rank == trumpRank) {
-                        this.cards[suit][i].isTrumpRank = true;
+                var card = this.cards[suit][i];
+                if (this.isTrump(card, trumpSuit, trumpRank)) {
+                    card.isTrump = true;
+                    if (card.rank == trumpRank) {
+                        card.isTrumpRank = true;
                     }
-                    if (this.cards[suit][i].suit == trumpSuit) {
-                        this.cards[suit][i].isTrumpSuit = true;
+                    if (card.suit == trumpSuit) {
+                        card.isTrumpSuit = true;
                     }
                 }
             }

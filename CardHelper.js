@@ -85,12 +85,11 @@ function compareTwoCards(card1, card2) {
             return card2.suit != SuitType.JOKERS;
         } else if (!card1.isTrumpRank && card2.isTrumpRank) {
             return card1.suit == SuitType.JOKERS;
-        } else { // both trump ranks
-            return false;
         }
+        return false;
     } else if (!card1.isTrump && card2.isTrump) {
         return false;
-    } else if (!card1.isTrump && !card2.isTrump) {
+    } else {
         if (card2.suit != card1.suit) {
             return true;
         } else {
@@ -116,9 +115,8 @@ function isNextHighestValue(card1, card2, trumpRank) {
             return true;
         } else if (card1.rank + 1 == trumpRank && card1.rank + 2 == card2.rank) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     } else {
         if (!card1.isTrumpRank && !card2.isTrumpRank) {
             if (card1.rank + 1 == card2.rank) {
