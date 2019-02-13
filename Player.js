@@ -128,19 +128,50 @@ class Player {
                 playerCardsInSuit = this.getTrump();
             }
 
+            // check play has all of the suit + any random cards
             if (playerCardsInSuit.length <= startingPlay.length) {
-                // check play has all of the suit + any random cards
+                // array of integer indices
+                var matchedPlayIndices = [];
+                
                 for (var i = 0; i < playerCardsInSuit.length; i++) {
                     var card = playerCardsInSuit[i];
-                    if (play.indexOf(card) == -1) {
-                        return false;
+                    var cardFoundInPlay = false;
+                    
+                    for (var j = 0; j < play.length; j++) {
+                        // matchedPlayIndices is an array of integers so using incluedes is fine
+                        if (matchedPlayIndices.includes(j)) {
+                            continue;
+                        }
+                        if (card.equals(play[j])) {
+                            matchedPlayIndices.push(j);
+                            cardFoundInPlay = true;
+                            break;
+                        }
+                    }
+                    if (!cardFoundInPlay) {
+                        return false
                     }
                 }
             } else {
                 // check play is all of the corresponding suit + doubles if applicable
+                
+                // array of integer indices
+                var matchedPlayerCardIndices = [];
+                
                 for (var i = 0; i < play.length; i++) {
                     var card = play[i];
-                    if (playerCardsInSuit.indexOf(card) == -1) {
+                    var playerHasCard = false;
+                    for (var j = 0; j < playerCardsInSuit.length; j++) {
+                        if (matchedPlayerCardIndices.includes(j)) {
+                            continue;
+                        }
+                        if (card.equals(playerCardsInSuit[j])) {
+                            matchedPlayerCardIndices.push(j);
+                            playerHasCard = true;
+                            break;
+                        }
+                    }
+                    if (!playerHasCard) {
                         return false;
                     }
                 }
